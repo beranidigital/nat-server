@@ -142,12 +142,13 @@
 
 
         @foreach(($stats) as $key => $stat)
+        
             <div class="row mt-4">
                 <div class="col-lg-12">
                     <x-chart-stats :title='AppSettings::translateSensorKey($key)'
                                    :labels="$stat['timestamp']"
                                    :values="$stat['data']"
-                                   :info="date('d M Y', strtotime($stat['timestamp'][count($stat['timestamp']) - 1]))"
+                                   :info="$stat['timestamp'][count($stat['timestamp']) - 1]"
 
                     ></x-chart-stats>
                 </div>

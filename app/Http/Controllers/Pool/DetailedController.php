@@ -95,7 +95,7 @@ class DetailedController extends Controller
                     ];
                 }
                 $stats[$sensor]['data'][] = $value;
-                $stats[$sensor]['timestamp'][] = date('M d H:i', strtotime($state['created_at']));
+                $stats[$sensor]['timestamp'][] = date('d M H:i', strtotime($state['created_at']));
             }
         }
         $data['stats'] = $stats;

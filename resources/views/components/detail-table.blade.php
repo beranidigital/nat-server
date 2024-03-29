@@ -60,7 +60,7 @@
                             @foreach($stat['formatted_sensors'] as $key => $data)
                                 <td class="text-sm">{{ $data['value'] }}</td>
                             @endforeach
-                            <td class="text-sm">{{ date('Y-m-d H:i:s', strtotime($stat['created_at'])) }}</td>
+                            <td class="text-sm">{{ date('d M Y H:i', strtotime($stat['created_at'])) }}</td>
                         </tr>
                     @endforeach
                     </tbody>
