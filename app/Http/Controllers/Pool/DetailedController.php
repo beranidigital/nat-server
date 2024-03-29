@@ -20,7 +20,7 @@ class DetailedController extends Controller
         $deviceName = request()->get('device', key(AppSettings::getDevices()));
 
 
-        $interval = 60 * 60; // 60 minutes
+        $interval = 60 * 60 * 12; // 60 minutes
         if (request()->has('interval')) {
             try {
                 $interval = request()->get('interval');
@@ -41,6 +41,8 @@ class DetailedController extends Controller
                 ->limit(1)
                 ->get()
                 ->toArray();
+
+        
 
         $data['latestState'] = $data['latestStates'][0] ?? [];
         // $data['latestStates'] =
