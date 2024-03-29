@@ -47,7 +47,9 @@
                     <thead class="thead-light">
                     <tr>
                         @foreach($status[0]['formatted_sensors'] as $key => $data)
-                            <th class="text-sm">{{ $data['label'] }}</th>
+                            @if($key !== 'salt')
+                                <th class="text-sm">{{ $data['label'] }}</th>
+                            @endif
                         @endforeach
                         <th class="text-sm"> Timestamp</th>
 
@@ -56,14 +58,18 @@
                     <tbody>
 
                     @foreach ($status as $stat)
-                        <tr>
-                            @foreach($stat['formatted_sensors'] as $key => $data)
-                            <td class="text-sm">{{ $data['value'] !== 'unknown' ? $data['value'] : '-' }}</td>
-
-                            @endforeach
-                            <td class="text-sm">{{ date('d M Y H:i', strtotime($stat['created_at'])) }}</td>
-                        </tr>
+                        @if(array_key_exists('formatted_sensors', $stat) && is_array($stat['formatted_sensors']))
+                            <tr>
+                                @foreach($stat['formatted_sensors'] as $key => $data)
+                                    @if($key !== 'salt')
+                                        <td class="text-sm">{{ $data['value'] !== 'unknown' ? $data['value'] : '-' }}</td>
+                                    @endif
+                                @endforeach
+                                <td class="text-sm">{{ date('d M Y H:i', strtotime($stat['created_at'])) }}</td>
+                            </tr>
+                        @endif
                     @endforeach
+
                     </tbody>
                 @endif
             </table>
