@@ -58,7 +58,8 @@
                     @foreach ($status as $stat)
                         <tr>
                             @foreach($stat['formatted_sensors'] as $key => $data)
-                                <td class="text-sm">{{ $data['value'] }}</td>
+                            <td class="text-sm">{{ $data['value'] !== 'unknown' ? $data['value'] : '-' }}</td>
+
                             @endforeach
                             <td class="text-sm">{{ date('d M Y H:i', strtotime($stat['created_at'])) }}</td>
                         </tr>
