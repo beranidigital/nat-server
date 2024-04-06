@@ -117,7 +117,7 @@
                                                            
                                         <img src="{{ asset('images/off.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
                                         <h6 class="d-block text-sm">
-                                            <span class="highlight-background" style="background-color: #808080; display: inline-block; padding: 5px; border-radius: 5px;">
+                                            <span class="highlight-background" style="background-color: #BFBFBF; display: inline-block; padding: 5px; border-radius: 5px;">
                                                 <span class="text-sm" style="color: #000000;">Sensor Off</span>
                                             </span>
                                         </h6>
