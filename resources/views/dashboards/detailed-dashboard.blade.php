@@ -87,7 +87,7 @@
                         @endif
                             @if ($statusValue == "off")
                                 <div class="card-body text-center">
-                                    <h4 style="padding-top: 30px; padding-bottom:30px; color:black;" class="mb-0 font-weight-bolder">Sensor Off</h4>
+                                    <h4 style="padding-top: 30px; padding-bottom:30px; color:#fff;" class="mb-0 font-weight-bolder">Sensor Off</h4>
                                 </div>
                             @else
                                 <div class="card-body text-center">
