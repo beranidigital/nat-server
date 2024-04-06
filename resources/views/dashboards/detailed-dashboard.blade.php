@@ -14,7 +14,7 @@
                     <div class="card bg-color">
                         <div class="card-body p-3">
                             <div class="row">
-                                <div class="col-8 my-auto">
+                                <div class="col-6 my-auto">
                                     <div class="numbers d-flex align-items-center justify-content-between">
                                         <h5 class="text-white font-weight-bolder mb-0">
                                             {{ AppSettings::translateDeviceName($deviceName) }}
@@ -25,7 +25,7 @@
                                         </h5>
                                     </div>
                                 </div>
-                                <div class="col-4"> <!-- Menambahkan div dengan col-4 untuk h6 -->
+                                <div class="col-6"> <!-- Menambahkan div dengan col-4 untuk h6 -->
                                     <div class="d-flex justify-content-end">
                                         <h6 class="text-white font-weight-bolder mb-0">
                                             @if (isset($latestState['created_at']))
@@ -66,15 +66,30 @@
 
 
 
-
+                    <?php 
+                    $statusValue = App\Models\AppSettings::where('key', $deviceName)->value('value');
+                    ?>
                     <div class="col-md-4 col-12 mt-4 ">
                         @if( $score > \App\Http\Controllers\SensorDataController::$parameterThresholdDisplay['green'])
+                            @if ($statusValue == "off")
+                            <div class="card bg-off">
+                            @else
                             <div class="card bg-success">
+                            @endif
                                 {{-- @elseif($score > \App\Http\Controllers\SensorDataController::$parameterThresholdDisplay['yellow'])
                             <div class="card bg-warning"> --}}
                         @else
-                        <div class="card bg-warning">
-                                @endif
+                            @if ($statusValue == "off")
+                            <div class="card bg-off">
+                            @else
+                            <div class="card bg-warning">
+                            @endif
+                        @endif
+                            @if ($statusValue == "off")
+                                <div class="card-body text-center">
+                                    <h4 style="padding-top: 30px; padding-bottom:30px; color:black;" class="mb-0 font-weight-bolder">Sensor Off</h4>
+                                </div>
+                            @else
                                 <div class="card-body text-center">
 
                                     <h1 class="text-white text-primary">
@@ -94,6 +109,7 @@
                                     <h6 class="mb-0 font-weight-bolder">{{ $latestState['formatted_sensors'][$sensor_name]['label']}}</h6>
 
                                 </div>
+                            @endif
                             </div>
 
                             </div>

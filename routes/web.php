@@ -27,6 +27,9 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Main Dashboard
     Route::get('/main-dashboard', [\App\Http\Controllers\Pool\MainDashboardController::class, 'index'])->middleware([$cacheableMiddleware])->name('main-dashboard');
+    
+    // Route::post('/toggle-device', 'MainDashboardController@toggleDevice')->name('toggleDevice');
+    Route::post('/toggle-device', [App\Http\Controllers\Pool\MainDashboardController::class, 'toggleDevice'])->name('toggle.device');
 
 
     Route::get('/detail', [\App\Http\Controllers\Pool\DetailedController::class, 'index'])->name('detail')->middleware([$cacheableMiddleware]);

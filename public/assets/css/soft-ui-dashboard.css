@@ -10280,6 +10280,10 @@ fieldset:disabled .btn {
   background-color: #fcd34d !important;
 }
 
+.bg-off{
+  background-color: #808080 !important;
+}
+
 .bg-danger {
   background-color: #ef4444 !important;
 }

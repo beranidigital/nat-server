@@ -9466,6 +9466,9 @@ textarea.form-control-lg {
 .bg-warning {
   background-color: #fbcf33 !important;
 }
+.bg-off{
+  background-color: #808080 !important;
+}
 
 .bg-danger {
   background-color: #ea0606 !important;

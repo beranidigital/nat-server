@@ -6,6 +6,10 @@
 
 
         @foreach($devices as $deviceId => $deviceFriendlyName)
+        <?php 
+            $statusValue = App\Models\AppSettings::where('key', $deviceId)->value('value');
+        ?>
+        
             @php
                 $data = $datas[$deviceId];
             @endphp
@@ -17,41 +21,86 @@
                             <h6 class="mb-0">{{$deviceFriendlyName}}</h6>
                             <div class="ms-auto"> <!-- Menempatkan elemen-elemen di sebelah kanan -->
                                 @foreach(\App\Models\AppSettings::$batterySensors as $sensor)
-                                    @if(isset($data['sensors'][$sensor]))
-                                        @php
-                                            // Ambil nilai persentase baterai dan tentukan warna berdasarkan kondisi
-                                            $valueBattery = intval($data['sensors'][$sensor]);
-                                            $color = '#30C873'; // Warna default: hijau
-                                            if($valueBattery < 20){
-                                                $color = '#FF0000'; // Warna: merah jika baterai kurang dari 20%
-                                            } else if($valueBattery < 50){
-                                                $color = '#DAA520'; // Warna: kuning jika baterai kurang dari 50%
-                                            }
-                                        @endphp
-                                        <span class="text-sm mb-0 ms-2" style="color: {{$color}};">
-                                            <i class="fas fa-battery-{{ $valueBattery < 20 ? 'empty' : ($valueBattery < 50 ? 'quarter' : 'full') }}"></i> {{ $valueBattery }}%
-                                        </span>
+                                    @if ($statusValue == "off")
+                                        
+                                    @else
+                                        @if(isset($data['sensors'][$sensor]))
+                                            @php
+                                                // Ambil nilai persentase baterai dan tentukan warna berdasarkan kondisi
+                                                $valueBattery = intval($data['sensors'][$sensor]);
+                                                $color = '#30C873'; // Warna default: hijau
+                                                if($valueBattery < 20){
+                                                    $color = '#FF0000'; // Warna: merah jika baterai kurang dari 20%
+                                                } else if($valueBattery < 50){
+                                                    $color = '#DAA520'; // Warna: kuning jika baterai kurang dari 50%
+                                                }
+                                            @endphp
+                                            <span class="text-sm mb-0 ms-2" style="color: {{$color}};">
+                                                <i class="fas fa-battery-{{ $valueBattery < 20 ? 'empty' : ($valueBattery < 50 ? 'quarter' : 'full') }}"></i> {{ $valueBattery }}%
+                                            </span>
+                                        @endif
                                     @endif
                                 @endforeach
                             </div>
-                            <button
+                            {{-- <button
                                 id="tooltip-{{$deviceId}}"
                                 type="button"
                                 class="btn btn-icon-only btn-rounded btn-outline-secondary mb-0 ms-2 btn-sm d-flex align-items-center justify-content-center"
                                 data-bs-toggle="tooltip" data-bs-placement="bottom">
                                 <i class="fas fa-info"></i>
-                            </button>
+                            </button> --}}
+                            <!-- Tambahkan switch di sini -->
+                            
+                            <div style="height:0px" class="form-check form-switch ms-4 mb-0">
+                                <input class="form-check-input" type="checkbox" id="switch-{{$deviceId}}" <?php echo $statusValue === 'on' ? 'checked' : ''; ?>>
+                                <label style="height: 0px; margin-left:0px;" class="form-check-label" for="switch-{{$deviceId}}">
+                                    <span id="switch-text-{{$deviceId}}">{{$statusValue === 'on' ? 'On' : 'Off'}}</span>
+                                </label>
+                            </div>
+                           
+                            
                             <script>
-                                (() => {
-                                    // set tooltip title attribute as user time zone
-                                    let time = "{{$data['created_at']}}";
-                                    time = new Date(time);
-                                    // format to local date time
-                                    time = time.toLocaleString();
-                                    document.getElementById('tooltip-{{$deviceId}}').setAttribute('title', time);
-                                })();
+                                document.getElementById('switch-{{$deviceId}}').addEventListener('change', function() {
+                                    let deviceId = "{{$deviceId}}";
+                                    let deviceName = "{{$deviceFriendlyName}}"; // Mengambil nama device
+                            
+                                    let status = this.checked ? 'on' : 'off';
+                            
+                                    // Mengubah teks label sesuai dengan status switch
+                                    let switchText = document.getElementById('switch-text-{{$deviceId}}');
+                                    switchText.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+                            
+                                    // Kirim permintaan AJAX untuk mengubah status perangkat
+                                    fetch("{{ route('toggle.device') }}", {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Pastikan untuk menyertakan token CSRF
+                                        },
+                                        body: JSON.stringify({ deviceId: deviceId, deviceName: deviceName, status: status }) // Menambahkan deviceName ke dalam payload
+                                    })
+                                    .then(response => {
+                                        if (response.ok) {
+                                            // Berhasil, lakukan sesuatu jika diperlukan
+                                            console.log('Device status updated successfully');
+                                            // Lakukan refresh halaman
+                                            window.location.reload();
+                                        } else {
+                                            // Gagal, lakukan sesuatu jika diperlukan
+                                            console.error('Failed to update device status');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('An error occurred:', error);
+                                    });
+                                });
                             </script>
+                            
+                            
+                            
+                            
                         </div>
+                        
 
                     </div>
                     <div class="card-body p-3">
@@ -64,29 +113,34 @@
                                 <h4 class="font-weight-bold mt-n10">
 
                                     {{-- @dd($device['scores']['ph']); --}}
-                                    @if($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['green'])
-                                    <img src="{{ asset('images/green.png') }}" alt="baik" style="width: 70px; height: 70px; border-radius: 50%;">
-                                    <h6 class="d-block text-sm">
-                                        <span class="highlight-background" style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm bold" style="color: #30C873;">Good</span>
-                                        </span>
-                                    </h6>
+                                    @if ($statusValue == "off")
+                                                           
+                                        <img src="{{ asset('images/off.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
+                                        <h6 class="d-block text-sm">
+                                            <span class="highlight-background" style="background-color: #808080; display: inline-block; padding: 5px; border-radius: 5px;">
+                                                <span class="text-sm" style="color: #000000;">Sensor Off</span>
+                                            </span>
+                                        </h6>
 
-                                    {{-- @elseif($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['yellow'])
-                                    <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
-                                    <h6 class="d-block text-sm">
-                                        <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm" style="color: #DAA520;">Caution</span>
-                                        </span>
-                                    </h6> --}}
-                                @else
-                                    <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
-                                    <h6 class="d-block text-sm">
-                                        <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
-                                            <span class="text-sm" style="color: #DAA520;">Caution</span>
-                                        </span>
-                                    </h6>
-                                @endif
+                                    @else
+                                        @if($data['final_score'] > \App\Http\Controllers\StatusController::$finalScoreDisplay['green'])
+                                        <img src="{{ asset('images/green.png') }}" alt="baik" style="width: 70px; height: 70px; border-radius: 50%;">
+                                        <h6 class="d-block text-sm">
+                                            <span class="highlight-background" style="background-color: #d2fcd2; display: inline-block; padding: 5px; border-radius: 5px;">
+                                                <span class="text-sm bold" style="color: #30C873;">Good</span>
+                                            </span>
+                                        </h6>
+
+                                        
+                                        @else
+                                            <img src="{{ asset('images/yellow.png') }}" alt="waspada" style="width: 70px; height: 70px; border-radius: 50%;">
+                                            <h6 class="d-block text-sm">
+                                                <span class="highlight-background" style="background-color: #FFFF00; display: inline-block; padding: 5px; border-radius: 5px;">
+                                                    <span class="text-sm" style="color: #DAA520;">Caution</span>
+                                                </span>
+                                            </h6>
+                                        @endif
+                                    @endif
 
 
                                     {{-- {{ intval($device['final_score'] * 100) }}% --}}
@@ -134,15 +188,19 @@
                                                                     $sensor = $column[$row]['sensor'];
                                                                     $state = $column[$row]['state'];
                                                                     $bg = '';
-                                                                    if(isset($data['scores'][$sensor])){
-                                                                        if($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['green']){
-                                                                            $bg = 'bg-success';
-                                                                        // } elseif($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['yellow']){
-                                                                        //     $bg = 'bg-warning';
-                                                                        } else {
-                                                                            $bg = 'bg-warning';
+                                                                    if ($statusValue == "off")
+                                                                        $bg = 'bg-off';
+                                                                    else {
+                                                                            if(isset($data['scores'][$sensor])){
+                                                                            if($data['scores'][$sensor] > \App\Http\Controllers\StatusController::$parameterThresholdDisplay['green']){
+                                                                                $bg = 'bg-success';
+                                                                            
+                                                                            } else {
+                                                                                $bg = 'bg-warning';
+                                                                            }
                                                                         }
                                                                     }
+                                                                    
                                                                 @endphp
                                                                 <span class="badge me-3 {{ $bg }}">
                                                                 </span>
