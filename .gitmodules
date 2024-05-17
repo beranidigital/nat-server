@@ -1,0 +1,3 @@
+[submodule "library/berani-common-filament-plugin"]
+	path = library/berani-common-filament-plugin
+	url = https://github.com/beranidigital/berani-common-filament-plugin
