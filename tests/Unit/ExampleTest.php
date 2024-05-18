@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\SensorDataController;
-use App\Http\Controllers\WaterpoolController;
 use App\Livewire\SettingsParameter;
 use PHPUnit\Framework\TestCase;
 
@@ -258,8 +257,5 @@ class ExampleTest extends TestCase
         }
     }
 
-    public function test_format()
-    {
-        WaterpoolController::formatSensor('battery', 22);
-    }
+
 }
