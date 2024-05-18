@@ -20,8 +20,9 @@
 </head>
 
 <body class="antialiased">
-@livewire('notifications')
 {{ $slot }}
+
+@livewire('notifications')
 
 @filamentScripts
 @vite('resources/js/app.js')

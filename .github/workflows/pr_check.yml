@@ -2,9 +2,6 @@ name: Laravel PR Check
 
 on:
   pull_request:
-  push:
-    branches-ignore:
-      - master
   workflow_dispatch:
 
 
