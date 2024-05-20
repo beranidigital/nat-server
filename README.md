@@ -4,6 +4,12 @@
 
 See here https://github.com/beranidigital/berani-base-architect
 
+# Cleanup command
+
+```bash
+php artisan app:monthly-cleanup --dry-run
+```
+
 ## Setup Device & Sensors
 
 Setup on POST request

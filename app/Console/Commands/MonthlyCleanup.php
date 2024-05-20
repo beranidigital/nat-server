@@ -36,7 +36,7 @@ class MonthlyCleanup extends Command
         if ($dryRun) {
             $this->info('Dry run enabled. No changes will be made.');
         }
-        // only keep 2 month worth of data
+        // only keep x month worth of data
         $maxMonths = 2;
         $inMilliseconds = now()->subMonths($maxMonths)->timestamp * 1000;
 
@@ -44,9 +44,9 @@ class MonthlyCleanup extends Command
         $totalEventsTable = Event::count();
         $totalEventsTableDeleted = number_format($totalEventsTableDeleted);
         $totalEventsTable = number_format($totalEventsTable);
-        $this->info("Deleting $totalEventsTableDeleted out of $totalEventsTable records from the events table...");
+        //$this->info("Deleting $totalEventsTableDeleted out of $totalEventsTable records from the events table...");
         if (!$dryRun) {
-            Event::where('created_at', '<', $inMilliseconds)->delete();
+            Event::where('time_fired_ts', '<', $inMilliseconds)->delete();
         }
 
         $totalStatesTableDeleted = State::where('last_updated_ts', '<', $inMilliseconds)->count();
@@ -55,16 +55,17 @@ class MonthlyCleanup extends Command
         $totalStatesTable = number_format($totalStatesTable);
         $this->info("Deleting $totalStatesTableDeleted out of $totalStatesTable records from the states table...");
         if (!$dryRun) {
-            State::where('last_updated_ts', '<', $inMilliseconds)->delete();
+            // doesnt work because it reference itself lol
+            //State::where('last_updated_ts', '<', $inMilliseconds)->delete();
         }
 
-        $totalStateLogsTableDeleted = StateLog::where('created_at', '<', now()->subMonths($maxMonths))->count();
+        $totalStateLogsTableDeleted = StateLog::where('created_at', '<', now()->subMonths($maxMonths * 6))->count();
         $totalStateLogsTable = StateLog::count();
         $totalStateLogsTableDeleted = number_format($totalStateLogsTableDeleted);
         $totalStateLogsTable = number_format($totalStateLogsTable);
         $this->info("Deleting $totalStateLogsTableDeleted out of $totalStateLogsTable records from the state_logs table...");
         if (!$dryRun) {
-            StateLog::where('created_at', '<', now()->subMonths($maxMonths))->delete();
+            StateLog::where('created_at', '<', now()->subMonths($maxMonths * 6))->delete();
         }
 
         $this->info('Monthly cleanup completed.');
