@@ -1,19 +1,8 @@
 # Nat Wave
 
-## Installation Linux
+# Setup
 
-1. `git clone --recursive https://github.com/Ticlext-Altihaf/nat-server`
-2. `composer install`
-3. config `.env`
-4. `php artisan key:generate`
-
-## CPanel Setup
-
-1. `git clone --recursive https://github.com/Ticlext-Altihaf/nat-server`
-2. Add `.htaccess` with permissions 644 to the root project folder
-3. Upload `vendor` folder
-4. Set `.env`
-5. Set project folder permissions to 755
+See here https://github.com/beranidigital/berani-base-architect
 
 ## Setup Device & Sensors
 
