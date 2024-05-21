@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Filament\Pages\PoolDetail;
 use App\Http\Controllers\WaterpoolController;
 use App\Models\AppSettings;
+use App\Models\AppSettings1;
 use App\Models\Pool\StateLog;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Split;
@@ -24,7 +25,7 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
 
     protected function getStats(): array
     {
-        $devices = AppSettings::getDevicesName()->value;
+        $devices = AppSettings1::getDevicesName()->value;
         $deviceSections = [];
         $allowedSensors = WaterpoolController::getAllowedSensors();
         foreach ($devices as $device => $friendlyName) {
@@ -36,20 +37,28 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 $formattedStatus = $sensorData['scores'];
                 $formattedBattery = $sensorData['sensors']['battery'];
                 $formattedSensor = $sensorData['formatted_sensors'];
-                $labelMappings = $formattedSensor;
+                $labelMappings = [
+                    'cl' => 'Chlorine',
+                    'ec' => 'Conductivity',
+                    'orp' => 'Sanitation(ORP)',
+                    'ph' => 'PH',
+                    'temp' => 'Temperature',
+                    'salt' => 'Salt',
+                    'tds' => 'Total Dissolved Solids(tds)'
+                ];
 
                 $sections = [];
                 $phColor = null;
                 $orpColor = null;
-        
+
                 foreach ($formattedStatus as  $key => $color) {
-                    $label = $labelMappings[$key]['label'] ?? $key;
+                    $label = $labelMappings[$key] ?? $key;
                     if (!in_array($key, $allowedSensors)) {
                         continue;
                     }
-                    if ($color >= AppSettings::$greenScoreMin && $color < AppSettings::$greenScoreMax) {
+                    if ($color >= AppSettings1::$greenScoreMin && $color < AppSettings1::$greenScoreMax) {
                         $iconColor =  Color::Emerald;
-                    } elseif ($color >= AppSettings::$yellowScoreMin && $color < AppSettings::$yellowScoreMax) {
+                    } elseif ($color >= AppSettings1::$yellowScoreMin && $color < AppSettings1::$yellowScoreMax) {
                         $iconColor = Color::Yellow;
                     } else{
                         $iconColor = Color::Red;
@@ -138,12 +147,14 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 } else if($formattedBattery > 25 && $formattedBattery < 70){
                      $battery = TextEntry::make('')->getStateUsing($textBattery)
                     ->icon('heroicon-s-battery-50')->alignEnd()->iconColor(Color::Yellow);
+                } else if($formattedBattery == 'unknown'){
+                    $battery = TextEntry::make('')->getStateUsing('-')
+                    ->icon('heroicon-s-battery-0')->alignEnd()->iconColor(Color::Red);
                 } else {
                      $battery = TextEntry::make('')->getStateUsing($textBattery)
                     ->icon('heroicon-s-battery-0')->alignEnd()->iconColor(Color::Red);
                 }
                
-
 
                 $friendlyNameSection = Split::make([$friendlyNameEntry,$battery]);
                 $sections = array_merge([$friendlyNameSection], [$imageEntry], [$iconStatus], $sections);
