@@ -82,11 +82,11 @@ class SettingsParameter extends Component implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill([
+        $this->data = [
             'parameter_profile' => self::kvToArray(AppSettings::getParameterProfile()),
             'pool_profile_parameter' => self::kvToArray(AppSettings::getPoolProfileParameter()),
-        ]);
-
+        ];
+        $this->form->fill($this->data);
     }
 
     public function form(Form $form): Form
@@ -121,22 +121,33 @@ class SettingsParameter extends Component implements HasForms
                             ->placeholder('Name'),
                         Repeater::make('value')
                             ->label("Parameter")
-                            ->columns(4)
+                            ->columns(7)
                             ->schema([
                                 Select::make('sensor')->options($this->getSensors()),
-                                TextInput::make('min')
+                                TextInput::make('start')
+                                    ->required()
+                                    ->label('Start')
+                                    ->numeric(),
+                                TextInput::make('cs')
+                                    ->label('Caution Start')
+                                    ->required()
+                                    ->numeric(),
+                                TextInput::make('gs')
                                     ->required()
                                     ->numeric()
-                                    ->lte('max'), // less than or equal
-                                TextInput::make('max')
+                                    ->label('Good Start'),
+                                TextInput::make('ge')
+                                    ->required()
+                                    ->label('Good End')
+                                    ->numeric(), // less than or equal
+                                TextInput::make('ce')
+                                    ->required()
+                                    ->label('Caution End')
+                                    ->numeric(), // greater than or equal
+                                TextInput::make('end')
                                     ->required()
                                     ->numeric()
-                                    ->gte('min'), // greater than or equal
-                                TextInput::make('score')
-                                    ->required()
-                                    ->numeric()
-                                    ->minValue(0)
-                                    ->maxValue(1),
+                                    ->label('End'),
                             ])
                     ])->reorderable(false)->collapsible()->collapsed()
                 ]),
@@ -148,8 +159,9 @@ class SettingsParameter extends Component implements HasForms
     public function getSensors()
     {
         $sensors = [];
-        foreach (AppSettings::$sensors as $sensor) {
-            $sensors[$sensor] = __('translation.' . $sensor);
+        $formattedSensor = AppSettings::getTranslation()->value;
+        foreach ($formattedSensor as $key => $value) {
+            $sensors[$key] = __($value);
         }
         return $sensors;
     }
