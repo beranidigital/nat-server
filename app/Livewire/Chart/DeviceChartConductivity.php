@@ -45,7 +45,7 @@ class DeviceChartConductivity extends ChartWidget
                     $split = explode('-', $value->date);
                     $value->date = $split[0] . '-W' . $split[1];
                 }
-                return Carbon::parse($value->date)->format('M d H:i');
+                return Carbon::parse($value->date)->format('d-m-Y');
             })->toArray(),
         ];
     }

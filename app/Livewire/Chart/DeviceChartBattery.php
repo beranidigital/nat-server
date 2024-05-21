@@ -44,9 +44,7 @@ class DeviceChartBattery extends ChartWidget
                     $split = explode('-', $value->date);
                     $value->date = $split[0] . '-W' . $split[1];
                 }
-                $date = $value->date instanceof Carbon ? $value->date->format('d-m-Y H:i:s') : $value->date;
-
-                return Carbon::parse($date)->format('M d H:i');
+                return Carbon::parse($value->date)->format('d-m-Y');
             })->toArray(),
         ];
     }
