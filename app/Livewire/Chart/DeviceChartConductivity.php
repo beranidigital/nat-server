@@ -36,7 +36,7 @@ class DeviceChartConductivity extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Chlorine',
+                    'label' => 'Conductivity',
                     'data' => $ec['data'],
                 ],
             ],

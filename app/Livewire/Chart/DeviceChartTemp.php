@@ -36,7 +36,7 @@ class DeviceChartTemp extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Chlorine',
+                    'label' => 'Temperature',
                     'data' => $temp['data'],
                 ],
             ],

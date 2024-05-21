@@ -35,7 +35,7 @@ class DeviceChartBattery extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Chlorine',
+                    'label' => 'Battery',
                     'data' => $battery['data'],
                 ],
             ],
@@ -68,45 +68,6 @@ class DeviceChartBattery extends ChartWidget
         return $battery;
     }
 
-    // protected function getData(): array
-    // {
-    //     $stateLogs = StateLog::where('device', $this->device)
-    //         ->orderBy('created_at', 'asc') // Order by ascending dates
-    //         ->get()
-    //         ->toArray();
-
-    //     $sensorData = [];
-
-    //     foreach ($stateLogs as $stateLog) {
-    //         $createdAt = Carbon::parse($stateLog['created_at'])->format('Y-m-d H:i');
-    //         foreach ($stateLog['formatted_sensors'] as $sensor => $state) {
-    //             if (!isset($sensorData[$sensor])) {
-    //                 $sensorData[$sensor] = [
-    //                     'labels' => [],
-    //                     'data' => [],
-    //                 ];
-    //             }
-    //             $sensorData[$sensor]['labels'][] = $createdAt;
-    //             $sensorData[$sensor]['data'][] = $state['value'];
-    //         }
-    //     }
-
-    //     $datasets = [];
-    //     foreach ($sensorData as $sensor => $data) {
-    //         $datasets[] = [
-    //             'label' => $sensor,
-    //             'data' => $data['data'],
-    //         ];
-    //     }
-
-    //     // Prepare chart data
-    //     $chartData = [
-    //         'datasets' => $datasets,
-    //         'labels' => $sensorData ? $sensorData[array_key_first($sensorData)]['labels'] : [], // Use labels from the first sensor
-    //     ];
-
-    //     return $chartData;
-    // }
 
     protected function getType(): string
     {

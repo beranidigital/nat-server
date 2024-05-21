@@ -10,15 +10,14 @@
     use Filament\Support\Colors\Color;
     use Filament\Tables\Actions\Action;
     use Filament\Widgets\TableWidget;
-    use Filament\Tables\Actions\ExportAction;
     use Maatwebsite\Excel\Facades\Excel;
     use Dompdf\Dompdf;
-use Filament\Tables\Enums\ActionsPosition;
 
     class DeviceTable extends TableWidget
     {
         protected static ?string $heading = 'All Items';
         public string $device;
+        
         protected function getFilamentTableColumns(): array
         {
             $allowedSensors = WaterpoolController::getAllowedSensors();

@@ -1,19 +1,9 @@
 <?php
-
 namespace App\Filament\Pages;
 
-use App\Enums\AppSettingsImage;
-use App\Enums\AppSettingsModule;
-use App\Enums\ProjectModule;
-use BezhanSalleh\FilamentShield\Traits\HasPageShield;
-use Carbon\WeekDay;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
+use Filament\Pages\Page;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 
 class AppSettings extends Page implements HasForms
@@ -34,4 +24,3 @@ class AppSettings extends Page implements HasForms
     }
 
 }
-
