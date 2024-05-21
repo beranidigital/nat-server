@@ -34,7 +34,8 @@ class FilterTimeline extends Widget implements HasForms
             ->columns(3)
             ->schema([
                 Select::make('frequency')
-                    ->default(IntervalFrequency::Weekly->name),
+                    ->default(IntervalFrequency::Weekly->name)
+                    ->options(IntervalFrequency::class),
                 DatePicker::make('start_date')
                     ->format('d/m/Y') // Set format correctly
                     ->default(Carbon::now()->startOfMonth()),
