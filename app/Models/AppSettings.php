@@ -75,7 +75,7 @@ class AppSettings extends Model
 
     public static function getDevicesName()
     {
-        if (app()->runningInConsole()) return [];
+ 
         $devicesName = self::get('devices_name');
         $default = [];
         $devices = StateLog::getDevices();
@@ -90,7 +90,10 @@ class AppSettings extends Model
                 'value' => $default,
             ]);
         }
-
+        if (app()->runningInConsole()) {
+            return (object)['value' => []];
+        }
+    
         $devicesNameValue = self::syncWithDefault($default, $devicesName->value);
 
         $devicesName->value = $devicesNameValue;
