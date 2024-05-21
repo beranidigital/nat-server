@@ -120,21 +120,29 @@ class AppSettings extends Component implements HasForms
     {
         $formattedDevices = $this->data['devices'];
         $formattedTranslation = $this->data['translation'];
-        $section = [];
-
+        $sections = [];
+        
+        $deviceInputs = [];
         foreach ($formattedDevices as $deviceKey => $deviceValue) {
-            $section[] = TextInput::make('devices.' . $deviceKey)
+            $deviceInputs[] = TextInput::make('devices.' . $deviceKey)
                 ->label('Name for ' .$deviceKey)
                 ->required();
         }
+        $sections[] = Section::make('Device Name')
+        ->schema($deviceInputs)
+        ->columns(2);
 
+        $translationInputs = [];
         foreach ($formattedTranslation as $translationKey => $translationValue) {
-            $section[] = TextInput::make('translation.' . $translationKey)
+            $translationInputs[] = TextInput::make('translation.' . $translationKey)
                 ->label($translationKey)
                 ->required();
         }
+        $sections[] = Section::make('Sensor Name')
+        ->schema($translationInputs)
+        ->columns(2);
 
-        return $section;
+        return $sections;
     }
 
     public function submit(): void

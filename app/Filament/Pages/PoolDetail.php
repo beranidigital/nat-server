@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\AppSettings;
 use App\Models\Pool\StateLog;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -22,9 +23,17 @@ class PoolDetail extends Page
         $this->stateLog = StateLog::where('device', $this->device)->firstOrFail();
         $this->deviceName = $this->getTitle();
     }
-
+    public function getDevicesName(): array
+    {
+        $devices = AppSettings::getDevicesName()->value;
+        return $devices;
+    }
     public function getTitle(): string|Htmlable
     {
-        return __($this->stateLog->friendly_name);
+        if (!app()->runningInConsole()) {
+            $devices = $this->getDevicesName();
+            return $devices[$this->device];
+        }
+        return $this->device;
     }
 }

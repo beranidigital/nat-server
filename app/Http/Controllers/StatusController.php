@@ -145,7 +145,7 @@ class StatusController extends Controller
 
         return [
             'value' => $formattedValue,
-            'unit' => 'Â°C',
+            'unit' => '°C',
             'label' => __('translation.temp'),
         ];
     }
@@ -183,7 +183,7 @@ class StatusController extends Controller
     {
         return [
             'value' => $value,
-            'unit' => 'Î¼S/cm',
+            'unit' => 'uS/cm',
             'label' => __('translation.ec'),
         ];
     }

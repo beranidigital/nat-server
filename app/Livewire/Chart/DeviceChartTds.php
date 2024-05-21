@@ -8,11 +8,11 @@ use App\Models\Pool\StateLog;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
+use Livewire\Component;
 
-
-class DeviceChartBattery extends ChartWidget
+class DeviceChartTds extends ChartWidget
 {
-    protected static ?string $heading = 'Battery';
+    protected static ?string $heading = 'Total dissolved solid (TDS)';
 
     public string $device;
     public array $filters = [];
@@ -26,7 +26,7 @@ class DeviceChartBattery extends ChartWidget
 
         $frequencyEnum = IntervalFrequency::from($frequency);
 
-        $battery = $this->getBattery($this->device);
+        $tds = $this->getTds($this->device);
         $data = Trend::query(StateLog::query()->where('device', $this->device));
         if ($startDate && $endDate) {
             $data = $data->between($startDate, $endDate);
@@ -35,25 +35,23 @@ class DeviceChartBattery extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Battery',
-                    'data' => $battery['data'],
+                    'label' => 'Total dissolved solid(tds)',
+                    'data' => $tds['data'],
                 ],
             ],
-              'labels' => $data->map(function ($value) use ($frequencyEnum) {
+            'labels' => $data->map(function ($value) use ($frequencyEnum) {
                 if ($frequencyEnum === IntervalFrequency::Weekly) {
                     $split = explode('-', $value->date);
                     $value->date = $split[0] . '-W' . $split[1];
                 }
-                $date = $value->date instanceof Carbon ? $value->date->format('d-m-Y H:i:s') : $value->date;
-
-                return Carbon::parse($date)->format('M d H:i');
+                return Carbon::parse($value->date)->format('M d H:i');
             })->toArray(),
         ];
     }
 
-    public function getBattery(string $device): ?array
+    public function getTds(string $device): ?array
     {
-        $battery = [];
+        $tds = [];
         $stateLogs = StateLog::where('device', $device)
         ->limit(1 * 24 * 1)
         ->orderBy('created_at', 'asc')
@@ -61,11 +59,11 @@ class DeviceChartBattery extends ChartWidget
         ->toArray();
 
         foreach ($stateLogs as $stateLog) {
-            if (isset($stateLog['formatted_sensors']['battery'])) {
-                $battery['data'][] = $stateLog['formatted_sensors']['battery']['value'];
+            if (isset($stateLog['formatted_sensors']['tds'])) {
+                $tds['data'][] = $stateLog['formatted_sensors']['tds']['value'];
             }
         }
-        return $battery;
+        return $tds;
     }
 
 
@@ -74,4 +72,3 @@ class DeviceChartBattery extends ChartWidget
         return 'line';
     }
 }
-

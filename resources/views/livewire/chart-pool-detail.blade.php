@@ -10,4 +10,6 @@
     @livewire('Chart.device-chart-ph', ['device' => $device, 'filters' => $this->filters])
     <br>
     @livewire('Chart.device-chart-temp', ['device' => $device, 'filters' => $this->filters])
+    <br>
+    @livewire('Chart.device-chart-tds', ['device' => $device, 'filters' => $this->filters])
 </div>

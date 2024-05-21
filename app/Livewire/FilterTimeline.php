@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Livewire;
 
 use App\Enums\IntervalFrequency;
-use App\Filament\Admin\Pages\Dashboard;
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -35,10 +34,13 @@ class FilterTimeline extends Widget implements HasForms
             ->columns(3)
             ->schema([
                 Select::make('frequency')
-                    ->default(IntervalFrequency::Weekly->name)
-                    ->options(IntervalFrequency::class),
-                DatePicker::make('start_date'),
-                DatePicker::make('end_date'),
+                    ->default(IntervalFrequency::Weekly->name),
+                DatePicker::make('start_date')
+                    ->format('d/m/Y') // Set format correctly
+                    ->default(Carbon::now()->startOfMonth()),
+                DatePicker::make('end_date')
+                    ->format('d/m/Y') // Set format correctly
+                    ->default(Carbon::now()->endOfMonth()),
             ])
             ->statePath('data');
     }
@@ -57,5 +59,4 @@ class FilterTimeline extends Widget implements HasForms
 
         $this->redirect($url . '?'. 'device=' . $device . '&' . http_build_query($params));
     }
-
 }
