@@ -26,7 +26,6 @@ class DeviceStats extends BaseWidget
 
         // Get allowed sensors
         $allowedSensors = WaterpoolController::getAllowedSensors();
-
         $sensorsData = []; // [sensor => [state1, state2, state3, ...]]
         if (empty($stateLogs)) {
             return [];
@@ -76,13 +75,24 @@ class DeviceStats extends BaseWidget
             } else{
                 $iconColor = Color::Red;
             }
+            if($state['value'] == 'unknown' || $state['value'] == 'unavailable')
+            {
+                $state['value'] = '-';
+                $diffInPercent = round($diffInPercent, 2);
+                $stats[] = Stat::make($state['label'], $state['value'])
+                ->description(($diff > 0 ? 'increase' : 'decrease') . ' by ' . abs($diffInPercent) . '%')
+                ->descriptionIcon('heroicon-m-arrow-trending-' . ($diff > 0 ? 'up' : 'down'))
+                ->chart($sensorsData[$sensor])
+                ->color($iconColor);
+            } else {
+                $diffInPercent = round($diffInPercent, 2);
+                $stats[] = Stat::make($state['label'], $state['value'] . ' ' . $state['unit'])
+                ->description(($diff > 0 ? 'increase' : 'decrease') . ' by ' . abs($diffInPercent) . '%')
+                ->descriptionIcon('heroicon-m-arrow-trending-' . ($diff > 0 ? 'up' : 'down'))
+                ->chart($sensorsData[$sensor])
+                ->color($iconColor);
+            }
 
-            $diffInPercent = round($diffInPercent, 2);
-            $stats[] = Stat::make($state['label'], $state['value'] . ' ' . $state['unit'])
-            ->description(($diff > 0 ? 'increase' : 'decrease') . ' by ' . abs($diffInPercent) . '%')
-            ->descriptionIcon('heroicon-m-arrow-trending-' . ($diff > 0 ? 'up' : 'down'))
-            ->chart($sensorsData[$sensor])
-            ->color($iconColor);
         }
 
         return $stats;

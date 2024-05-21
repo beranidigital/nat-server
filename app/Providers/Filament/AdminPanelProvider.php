@@ -3,13 +3,13 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\PoolDetail;
+use App\Models\AppSettings;
 use App\Models\Pool\StateLog;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -25,7 +25,7 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        $devices = StateLog::getDevices();
+        $devices = AppSettings::getDevicesName()->value;
         // sort alphabetically
         asort($devices);
         foreach ($devices as $device => $friendly_name) {

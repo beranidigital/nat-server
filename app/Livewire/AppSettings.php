@@ -86,7 +86,7 @@ class AppSettings extends Component implements HasForms
 
     public function loadData()
     {
-        $devices = ModelAppSettings::getDevices();
+        $devices = ModelAppSettings::getDevicesName()->value;
         $translation = ModelAppSettings::getTranslation()->value;
         if (is_array($devices)) {
             foreach ($devices as $deviceKey => $deviceValue) {
@@ -145,14 +145,12 @@ class AppSettings extends Component implements HasForms
             'devices_name' => $state['devices'],
             'translation' => $state['translation'],
         ];
-
         foreach ($dataToUpdate as $key => $value) {
             ModelAppSettings::updateOrCreate(
                 ['key' => $key],
                 ['value' => $value]
             );
         }
-
         \Filament\Notifications\Notification::make()
             ->title('AppSettings updated successfully.')
             ->success()

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Http\Controllers\WaterpoolController;
 use App\Models\AppSettings;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
@@ -160,7 +161,11 @@ class SettingsParameter extends Component implements HasForms
     {
         $sensors = [];
         $formattedSensor = AppSettings::getTranslation()->value;
+        $allowedSensors = WaterpoolController::getAllowedSensors();
         foreach ($formattedSensor as $key => $value) {
+             if (!in_array($key, $allowedSensors)) {
+                    continue;
+                }
             $sensors[$key] = __($value);
         }
         return $sensors;
