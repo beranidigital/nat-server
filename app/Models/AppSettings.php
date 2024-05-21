@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 // Cool stuff here
 class AppSettings extends Model
 {
-    use HasFactory;
+      use HasFactory;
 
     public static $natwaveDevices = [
         'nat_01_1',
@@ -26,7 +26,7 @@ class AppSettings extends Model
 
     public static $greenScoreMax = 1.0;
     public static $greenScoreMin = 0.7;
-    public static $yellowScoreMax = 0.69;
+    public static $yellowScoreMax = 0.7;
     public static $yellowScoreMin = 0.4;
     public static $ignoreSensors = [
         'timestamp',
@@ -198,10 +198,14 @@ class AppSettings extends Model
         // convert integer score to float based on green and yellow
         foreach ($value as $profile => $parameters) {
             foreach ($parameters as $i => $parameter) {
-                if ($parameter['score'] == 2) {
-                    $value[$profile][$i]['score'] = self::$yellowScoreMax;
-                } else if ($parameter['score'] == 3) {
-                    $value[$profile][$i]['score'] = self::$greenScoreMax;
+                if (isset($parameter['gs']) && isset($parameter['ge'])) {
+                    if ($parameter['gs'] < $parameter['ge']) {
+                        $value[$profile][$i]['score'] = self::$greenScoreMax;
+                    } else if (isset($parameter['cs']) && isset($parameter['ce'])) {
+                        if ($parameter['cs'] <= $parameter['ce']) {
+                            $value[$profile][$i]['score'] = self::$yellowScoreMax;
+                        }
+                    }
                 }
             }
         }

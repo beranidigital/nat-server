@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Exports\SensorDataExport;
 use App\Models\AppSettings;
-use App\Models\AppSettings1;
 use App\Models\Pool\StateLog;
 use App\Models\SensorData;
 use App\Models\State;
@@ -136,7 +135,7 @@ class SensorDataController extends Controller
 
         // Calculate TDS by EC
         foreach ($sensors as $sensor => $data) {
-            $sensorName = AppSettings1::entityToSensorName($sensor);
+            $sensorName = AppSettings::entityToSensorName($sensor);
             if ($sensorName !== 'ec') continue;
             $entityName = 'sensor.' . $deviceName . '_tds';
             $sensors[$entityName] = [
@@ -204,7 +203,7 @@ class SensorDataController extends Controller
 
 
 
-        $deviceName = request()->get('device', AppSettings1::$natwaveDevices[0]);
+        $deviceName = request()->get('device', AppSettings::$natwaveDevices[0]);
         //yes this is duplicate query, have problem ?
         $states = WaterpoolController::getStates($deviceName, 30);
         # $stats = SensorDataController::getStats($deviceName, 30);
@@ -301,9 +300,9 @@ class SensorDataController extends Controller
     {
         $isPdf = request()->get('isPdf', false);
 
-        $deviceName = request()->get('deviceName', AppSettings1::$natwaveDevices[0]);
+        $deviceName = request()->get('deviceName', AppSettings::$natwaveDevices[0]);
         // check if device name is valid
-        if (!in_array($deviceName, AppSettings1::$natwaveDevices)) {
+        if (!in_array($deviceName, AppSettings::$natwaveDevices)) {
             abort(404);
         }
 
@@ -338,7 +337,7 @@ class SensorDataController extends Controller
         $scores = [];
 
         foreach ($state as $sensor => $value) {
-            if (in_array($sensor, AppSettings1::$ignoreSensors)) continue;
+            if (in_array($sensor, AppSettings::$ignoreSensors)) continue;
             $value = floatval($value['value'] ?? 0);
             $scores[$sensor] = self::calculateScoreFor($sensor, $value, $deviceName);
         }
@@ -349,8 +348,8 @@ class SensorDataController extends Controller
     public static function calculateScoreFor(string $sensor, float $value, string $deviceName): float
     {
 
-        $parameterName = AppSettings1::getPoolProfileParameter()[$deviceName];
-        $parameterThresholds = AppSettings1::getParameterProfile()[$parameterName];
+        $parameterName = AppSettings::getPoolProfileParameter()[$deviceName];
+        $parameterThresholds = AppSettings::getParameterProfile()[$parameterName];
         $result = self::calculateScoreWithParameter($sensor, $value, $parameterThresholds);
         if (!$result) {
             //Log::warning("Sensor $sensor not found with parameter $parameterName");
@@ -432,5 +431,5 @@ class SensorDataController extends Controller
 
 }
 
-SensorDataController::$parameterThresholdDisplay['green'] = AppSettings1::$greenScoreMin;
-SensorDataController::$parameterThresholdDisplay['yellow'] = AppSettings1::$yellowScoreMin;
+SensorDataController::$parameterThresholdDisplay['green'] = AppSettings::$greenScoreMin;
+SensorDataController::$parameterThresholdDisplay['yellow'] = AppSettings::$yellowScoreMin;

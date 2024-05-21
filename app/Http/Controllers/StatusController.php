@@ -22,69 +22,57 @@ class StatusController extends Controller
     public static $parametersThresholdInternational = [
         [
             'sensor' => 'temp',
-            'min' => 22,
-            'max' => 26,
-            'score' => 0.4
-        ],
-        [
-            'sensor' => 'temp',
-            'min' => 18,
-            'max' => 29,
-            'score' => 0.7
+            'start' => 0,
+            'cs' => 18,
+            'gs' => 22,
+            'ge' => 26,
+            'ce' => 28,
+            'end' => 50
         ],
         [
             'sensor' => 'ph',
-            'min' => 7.2,
-            'max' => 8.0,
-            'score' => 0.4
-        ],
-        [
-            'sensor' => 'ph',
-            'min' => 6.5,
-            'max' => 8.6,
-            'score' => 0.7
+            'start' => 0,
+            'cs' => 6.5,
+            'gs' => 7.2,
+            'ge' => 8.0,
+            'ce' => 10.0,
+            'end' => 10.0
         ],
         [
             'sensor' => 'orp',
-            'min' => 700,
-            'max' => 750,
-            'score' => 0.4
-        ],
-        [
-            'sensor' => 'orp',
-            'min' => 650,
-            'max' => 700,
-            'score' => 0.7
+            'start' => 100,
+            'cs' => 650,
+            'gs' => 700,
+            'ge' => 750,
+            'ce' => 800,
+            'end' => 800
         ],
         [
             'sensor' => 'ec',
-            'min' => 2.5,
-            'max' => 3.0,
-            'score' => 0.4
-        ],
-        [
-            'sensor' => 'ec',
-            'min' => 2.0,
-            'max' => 2.5,
-            'score' => 0.7
+            'start' => 1.0,
+            'cs' => 2.0,
+            'gs' => 2.5,
+            'ge' => 3.0,
+            'ce' => 4.0,
+            'end' => 5.0
         ],
         [
             'sensor' => 'tds',
-            'min' => 0,
-            'max' => 500,
-            'score' => 1.0
+            'start' => 0,
+            'cs' => 200,
+            'gs' => 700,
+            'ge' => 1500,
+            'ce' => 2000,
+            'end' => 2000
         ],
         [
-            'sensor' => 'tds',
-            'min' => 0,
-            'max' => 600,
-            'score' => 0.7
-        ],
-        [
-            'sensor' => 'tds',
-            'min' => 0,
-            'max' => 750,
-            'score' => 0.5
+            'sensor' => 'cl',
+            'start' => 0,
+            'cs' => 0.1,
+            'gs' => 1.0,
+            'ge' => 3.0,
+            'ce' => 5.0,
+            'end' => 5.0
         ],
 
     ];
@@ -124,7 +112,7 @@ class StatusController extends Controller
             $device['final_score'] = $this->calculateFinalScore($device['scores'], $deviceName);
             $states = WaterpoolController::getStates($deviceName, 1);
             if (count($states) != 0) {
-                $device['😎'] = $states[0];
+                $device['ðŸ˜Ž'] = $states[0];
             }
             $data['devices'][] = $device;
         }
@@ -157,7 +145,7 @@ class StatusController extends Controller
 
         return [
             'value' => $formattedValue,
-            'unit' => '°C',
+            'unit' => 'Â°C',
             'label' => __('translation.temp'),
         ];
     }
@@ -195,7 +183,7 @@ class StatusController extends Controller
     {
         return [
             'value' => $value,
-            'unit' => 'μS/cm',
+            'unit' => 'Î¼S/cm',
             'label' => __('translation.ec'),
         ];
     }
@@ -244,7 +232,7 @@ class StatusController extends Controller
 
     /**
      * Calculate score for each parameter
-     * @param array<string, array> $state // e.g ['temperature' => ['value' => 30.0, 'unit' => '°C']]
+     * @param array<string, array> $state // e.g ['temperature' => ['value' => 30.0, 'unit' => 'Â°C']]
      * @return array<string, float> $scores // e.g ['temperature' => 1.0]
      */
     public static function calculateScore(array $state, string $deviceName): array

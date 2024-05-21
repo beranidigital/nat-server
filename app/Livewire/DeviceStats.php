@@ -4,7 +4,6 @@ namespace App\Livewire;
 
 use App\Http\Controllers\WaterpoolController;
 use App\Models\AppSettings;
-use App\Models\AppSettings1;
 use App\Models\Pool\StateLog;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -70,9 +69,9 @@ class DeviceStats extends BaseWidget
            // Ambil skor dari state log
             $formattedStatus = $stateLogs[0]['scores'];
             $score = $formattedStatus[$sensor] ?? null;
-            if ($score >= AppSettings1::$greenScoreMin && $score < AppSettings1::$greenScoreMax) {
+            if ($score >= AppSettings::$greenScoreMin && $score < AppSettings::$greenScoreMax) {
                 $iconColor =  Color::Emerald;
-            } elseif ($score > AppSettings1::$yellowScoreMin && $score < AppSettings1::$yellowScoreMax) {
+            } elseif ($score > AppSettings::$yellowScoreMin && $score < AppSettings::$yellowScoreMax) {
                 $iconColor = Color::Yellow;
             } else{
                 $iconColor = Color::Red;

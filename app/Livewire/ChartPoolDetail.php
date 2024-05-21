@@ -48,7 +48,6 @@ class ChartPoolDetail extends Component
         return view('livewire.chart-pool-detail',[
             'device' => $this->device,
             'filters' => $this->filters,
-
         ]);
     }
 

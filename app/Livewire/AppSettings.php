@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\AppSettings1 as ModelAppSettings1;
+use App\Models\AppSettings as ModelAppSettings;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -14,7 +14,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Livewire\Component;
 
-class AppSettings1 extends Component implements HasForms
+class AppSettings extends Component implements HasForms
 {
     use InteractsWithForms;
     public ?array $data = [];
@@ -86,8 +86,8 @@ class AppSettings1 extends Component implements HasForms
 
     public function loadData()
     {
-        $devices = ModelAppSettings1::getDevices();
-        $translation = ModelAppSettings1::getTranslation()->value;
+        $devices = ModelAppSettings::getDevices();
+        $translation = ModelAppSettings::getTranslation()->value;
         if (is_array($devices)) {
             foreach ($devices as $deviceKey => $deviceValue) {
                     $this->data['devices'][$deviceKey] = $deviceValue;
@@ -147,7 +147,7 @@ class AppSettings1 extends Component implements HasForms
         ];
 
         foreach ($dataToUpdate as $key => $value) {
-            ModelAppSettings1::updateOrCreate(
+            ModelAppSettings::updateOrCreate(
                 ['key' => $key],
                 ['value' => $value]
             );

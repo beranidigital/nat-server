@@ -5,7 +5,6 @@ namespace App\Models\Pool;
 use App\Http\Controllers\SensorDataController;
 use App\Http\Controllers\WaterpoolController;
 use App\Models\AppSettings;
-use App\Models\AppSettings1;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -76,7 +75,7 @@ class StateLog extends Model
         $scores = [];
         foreach ($this->formatted_sensors as $sensor => $state) {
             $value = $state['value'];
-            if (in_array($sensor, AppSettings1::$ignoreSensors)) continue;
+            if (in_array($sensor, AppSettings::$ignoreSensors)) continue;
             // check if not float
             if (!is_numeric($value)) {
                 $scores[$sensor] = 0;

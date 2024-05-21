@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 class WaterpoolController extends Controller
 {
 
-
     public static function getStates(string $deviceName = null, int $limit = 15): array
     {
         if ($deviceName == null) $deviceName = AppSettings::$natwaveDevices[0];
@@ -103,16 +102,6 @@ class WaterpoolController extends Controller
         return $ec * 0.5;
     }
 
-    public function index()
-    {
-        $deviceName = request()->query('device');
-        if (!$deviceName) $deviceName = AppSettings::$natwaveDevices[0];
-
-
-        return view('waterpool/5-table-status', [
-            'deviceName' => $deviceName,
-        ]);
-    }
 
     public static $allowedSensors = ['tds', 'cl', 'ph', 'ec', 'temp', 'orp'];
 
@@ -120,71 +109,4 @@ class WaterpoolController extends Controller
     {
         return self::$allowedSensors;;
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
-
 }

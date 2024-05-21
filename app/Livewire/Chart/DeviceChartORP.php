@@ -54,6 +54,7 @@ class DeviceChartORP extends ChartWidget
     {
         $orp = [];
         $stateLogs = StateLog::where('device', $device)
+        ->limit(1 * 24 * 1)
         ->orderBy('created_at', 'asc')
         ->get()
         ->toArray();

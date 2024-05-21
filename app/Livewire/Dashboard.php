@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Filament\Pages\PoolDetail;
 use App\Http\Controllers\WaterpoolController;
 use App\Models\AppSettings;
-use App\Models\AppSettings1;
 use App\Models\Pool\StateLog;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Split;
@@ -25,7 +24,7 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
 
     protected function getStats(): array
     {
-        $devices = AppSettings1::getDevicesName()->value;
+        $devices = AppSettings::getDevicesName()->value;
         $deviceSections = [];
         $allowedSensors = WaterpoolController::getAllowedSensors();
         foreach ($devices as $device => $friendlyName) {
@@ -37,28 +36,20 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 $formattedStatus = $sensorData['scores'];
                 $formattedBattery = $sensorData['sensors']['battery'];
                 $formattedSensor = $sensorData['formatted_sensors'];
-                $labelMappings = [
-                    'cl' => 'Chlorine',
-                    'ec' => 'Conductivity',
-                    'orp' => 'Sanitation(ORP)',
-                    'ph' => 'PH',
-                    'temp' => 'Temperature',
-                    'salt' => 'Salt',
-                    'tds' => 'Total Dissolved Solids(tds)'
-                ];
+                $labelMappings = $formattedSensor;
 
                 $sections = [];
                 $phColor = null;
                 $orpColor = null;
-
+        
                 foreach ($formattedStatus as  $key => $color) {
-                    $label = $labelMappings[$key] ?? $key;
+                    $label = $labelMappings[$key]['label'] ?? $key;
                     if (!in_array($key, $allowedSensors)) {
                         continue;
                     }
-                    if ($color >= AppSettings1::$greenScoreMin && $color < AppSettings1::$greenScoreMax) {
+                    if ($color >= AppSettings::$greenScoreMin && $color < AppSettings::$greenScoreMax) {
                         $iconColor =  Color::Emerald;
-                    } elseif ($color >= AppSettings1::$yellowScoreMin && $color < AppSettings1::$yellowScoreMax) {
+                    } elseif ($color >= AppSettings::$yellowScoreMin && $color < AppSettings::$yellowScoreMax) {
                         $iconColor = Color::Yellow;
                     } else{
                         $iconColor = Color::Red;
@@ -75,7 +66,8 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                         ->icon('heroicon-s-stop')
                         ->iconColor($iconColor);
 
-                    if($formattedSensor[$key]['value'] == 'unknown'){
+                    if($formattedSensor[$key]['value'] == 'unknown' || $formattedSensor[$key]['value'] == 'unavailable')
+                    {
                         $formattedSensor[$key]['value'] = '-';
                         $formattedSensor[$key]['unit'] = '';
                     }
@@ -135,13 +127,27 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                     ->extraAttributes(['style' => 'margin-left:40%;']);
                 $friendlyNameEntry = TextEntry::make('')->getStateUsing($friendlyName)->size('lg')->weight(FontWeight::Bold);
 
-                $battery = TextEntry::make('')->getStateUsing($formattedBattery . '%')
-                ->icon('heroicon-s-battery-100')->alignEnd();
+                if(!is_numeric($formattedBattery)){
+                    $textBattery = $formattedBattery;
+                } else {
+                    $textBattery = $formattedBattery . '%';
+                }
+                if($formattedBattery > 70 && $formattedBattery <= 100){
+                     $battery = TextEntry::make('')->getStateUsing($textBattery)
+                    ->icon('heroicon-s-battery-100')->alignEnd()->iconColor(Color::Emerald);
+                } else if($formattedBattery > 25 && $formattedBattery < 70){
+                     $battery = TextEntry::make('')->getStateUsing($textBattery)
+                    ->icon('heroicon-s-battery-50')->alignEnd()->iconColor(Color::Yellow);
+                } else {
+                     $battery = TextEntry::make('')->getStateUsing($textBattery)
+                    ->icon('heroicon-s-battery-0')->alignEnd()->iconColor(Color::Red);
+                }
+               
 
 
                 $friendlyNameSection = Split::make([$friendlyNameEntry,$battery]);
                 $sections = array_merge([$friendlyNameSection], [$imageEntry], [$iconStatus], $sections);
-                $section = Section::make($sections);
+                $section = Section::make($sections)->extraAttributes(['onclick' => "window.location.href='admin/pool-detail?device=$device'", 'style' => 'cursor: pointer;']);
                 $deviceSections[$friendlyName] = $section;
             }
         }

@@ -34,7 +34,7 @@ use Filament\Tables\Enums\ActionsPosition;
             ];
             // Ambil data state log
             $stateLogs = StateLog::where('device', $this->device)
-                ->orderBy('created_at', 'desc')
+                ->orderBy('created_at', 'asc')
                 ->limit(1 * 24 * 1)
                 ->get()
                 ->toArray();
@@ -78,11 +78,12 @@ use Filament\Tables\Enums\ActionsPosition;
 
         public function table(Table $table): Table
         {
+            $stateLogQuery = StateLog::where('device', $this->device)->limit(24);
             return $table
                 ->columns(
                     $this->getFilamentTableColumns()
                 )
-                ->query(StateLog::where('device', $this->device)->orderBy('created_at', 'asc'))
+                ->query($stateLogQuery)
                 ->headerActions([
                     Action::make('export_excel')
                     ->color(Color::Blue)

@@ -55,6 +55,7 @@ class DeviceChartBattery extends ChartWidget
     {
         $battery = [];
         $stateLogs = StateLog::where('device', $device)
+        ->limit(1 * 24 * 1)
         ->orderBy('created_at', 'asc')
         ->get()
         ->toArray();
