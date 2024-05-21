@@ -20,17 +20,14 @@ class ChartPoolDetail extends Component
         $startDate = $filters['start_date'] ?? null;
         $endDate = $filters['end_date'] ?? null;
 
-        if ($startDate) $startDate = Carbon::parse($startDate);
-        if ($endDate) $endDate = Carbon::parse($endDate);
+        if ($startDate) $startDate = \Illuminate\Support\Carbon::parse($startDate);
+        if ($endDate) $endDate = \Illuminate\Support\Carbon::parse($endDate);
 
         $frequency = $filters['frequency'] ?? IntervalFrequency::Weekly->name;
-        $frequencyEnum = IntervalFrequency::from($frequency);
 
 
         return [
             'frequency' => $frequency,
-            'frequencyEnum' => $frequencyEnum,
-            'learningGroups' => $filters['learningGroups'] ?? null,
             'startDate' => $startDate,
             'endDate' => $endDate,
         ];

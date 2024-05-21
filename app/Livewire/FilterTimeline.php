@@ -37,11 +37,13 @@ class FilterTimeline extends Widget implements HasForms
                     ->default(IntervalFrequency::Weekly->name)
                     ->options(IntervalFrequency::class),
                 DatePicker::make('start_date')
-                    ->format('d/m/Y') // Set format correctly
-                    ->default(Carbon::now()->startOfMonth()),
+                    ->default(Carbon::now()->subWeek())
+                    ->displayFormat('d-m-Y')
+                    ->native(false),
                 DatePicker::make('end_date')
-                    ->format('d/m/Y') // Set format correctly
-                    ->default(Carbon::now()->endOfMonth()),
+                    ->default(Carbon::now()->endOfMonth())
+                    ->displayFormat('d-m-Y')
+                    ->native(false),
             ])
             ->statePath('data');
     }
