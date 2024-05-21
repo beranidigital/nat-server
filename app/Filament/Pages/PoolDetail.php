@@ -28,12 +28,10 @@ class PoolDetail extends Page
         $devices = AppSettings::getDevicesName()->value;
         return $devices;
     }
+
     public function getTitle(): string|Htmlable
     {
-        if (!app()->runningInConsole()) {
-            $devices = $this->getDevicesName();
-            return $devices[$this->device];
-        }
-        return $this->device;
+        $devices = $this->getDevicesName();
+        return $devices[$this->device];
     }
 }

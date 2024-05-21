@@ -75,6 +75,7 @@ class AppSettings extends Model
 
     public static function getDevicesName()
     {
+        if (app()->runningInConsole()) return [];
         $devicesName = self::get('devices_name');
         $default = [];
         $devices = StateLog::getDevices();
