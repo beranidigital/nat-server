@@ -91,9 +91,10 @@ class AppSettings extends Model
             ]);
         }
         if (app()->runningInConsole()) {
-            return (object)['value' => 'devices_name',
-            'key' => [],
-        ];
+            $devicesName = self::create([
+                'key' => 'devices_name',
+                'value' => [],
+            ]);
         }
     
         $devicesNameValue = self::syncWithDefault($default, $devicesName->value);

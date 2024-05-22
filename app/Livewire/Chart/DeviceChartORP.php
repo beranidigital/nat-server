@@ -21,7 +21,7 @@ class DeviceChartORP extends ChartWidget
     protected function getData(): array
     {
         $filters = ChartPoolDetail::extractFilter($this->filters);
-        $startDate = $filters['startDate'] ?? now()->subWeek();
+        $startDate = $filters['startDate'] ?? now()->subDays(8);
         $endDate = $filters['endDate'] ?? now();
         $frequency = $filters['frequency'] ?? 'Weekly';
 
