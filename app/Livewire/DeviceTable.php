@@ -83,12 +83,13 @@
 
         public function table(Table $table): Table
         {
-            $stateLogQuery = StateLog::where('device', $this->device);
+            $stateLogQuery = StateLog::where('device', $this->device)->limit(1 * 24 * 1);
+            set_time_limit(300);
             return $table
                 ->columns(
                     $this->getFilamentTableColumns()
                 )
-                ->query($stateLogQuery)
+                ->query(fn () => $stateLogQuery)
                 ->headerActions([
                     Action::make('export_excel')
                     ->color(Color::Blue)
