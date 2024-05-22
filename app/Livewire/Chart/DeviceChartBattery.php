@@ -58,8 +58,10 @@ class DeviceChartBattery extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Battery',
-                    'data' => $data->map(fn (TrendValue $value) => $value->aggregate)->toArray(),
-                ],
+                    'data' => $data->map(function ($value){
+                        return $value->data;
+                    }),
+                ],  
             ],
               'labels' => $data->map(function ($value) use ($frequencyEnum) {
                 if ($frequencyEnum === IntervalFrequency::Weekly) {
