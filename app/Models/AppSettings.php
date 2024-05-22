@@ -75,6 +75,12 @@ class AppSettings extends Model
 
     public static function getDevicesName()
     {
+        if (app()->runningInConsole()) {
+            return (object)[
+                'value' => [],
+                'key' => 'devices_name'
+            ];
+        }
  
         $devicesName = self::get('devices_name');
         $default = [];
@@ -88,12 +94,6 @@ class AppSettings extends Model
             $devicesName = self::create([
                 'key' => 'devices_name',
                 'value' => $default,
-            ]);
-        }
-        if (app()->runningInConsole()) {
-            $devicesName = self::create([
-                'key' => 'devices_name',
-                'value' => [],
             ]);
         }
     
