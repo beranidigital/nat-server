@@ -3,6 +3,5 @@
         <form wire:submit="create" wire:change="create">
             {{ $this->form }}
         </form>
-
     </x-filament::section>
 </x-filament-widgets::widget>
