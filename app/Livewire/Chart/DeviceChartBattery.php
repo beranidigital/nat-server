@@ -40,56 +40,32 @@ class DeviceChartBattery extends ChartWidget
     protected function getData(): array
     {
         $filters = ChartPoolDetail::extractFilter($this->filters);
-        $startDate = $filters['startDate'] ?? now()->subWeek();
+        $startDate = $filters['startDate'] ?? now()->subDays(5);
         $endDate = $filters['endDate'] ?? now();
-        $frequency = $filters['frequency'] ?? 'Weekly';
+        $frequency = $filters['frequency'] ?? 'Daily';
 
         $frequencyEnum = IntervalFrequency::from($frequency);
 
-        $stateLogs = StateLog::where('device', $this->device)
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        $data = $stateLogs->map(function ($stateLog) {
-            return [
-                'date' => $stateLog->created_at->format('d-m-Y'),
-                'battery' => (float) ($stateLog->formatted_sensors['battery']['value'] ?? 0),
-            ];
-        });
-
-        $groupedData = $data->groupBy(function ($item) use ($frequencyEnum) {
-            if ($frequencyEnum === IntervalFrequency::Weekly) {
-                return Carbon::parse($item['date'])->format('Y-W');
-            }
-            return Carbon::parse($item['date'])->format('Y-m-d');
-        });
-
-        $labels = $groupedData->keys()->map(function ($date) use ($frequencyEnum) {
-            if ($frequencyEnum === IntervalFrequency::Weekly) {
-                $split = explode('-W', $date);
-                if (count($split) === 2) {
-                    $year = $split[0];
-                    $week = $split[1];
-                    return Carbon::now()->setISODate($year, $week)->startOfWeek()->format('d-m-Y');
-                }
-                return $date; // Return the original date if split is not as expected
-            }
-            return Carbon::parse($date)->format('d-m-Y');
-        })->toArray();
-
-        $batteryData = $groupedData->map(function ($items) {
-            return $items->sum('battery');
-        })->toArray();
-
+        $battery = $this->getBattery($this->device);
+        $data = Trend::query(StateLog::query()->where('device', $this->device));
+        if ($startDate && $endDate) {
+            $data = $data->between($startDate, $endDate);
+        }
+        $data = $data->interval($frequencyEnum->toTrendInterval())->count();
         return [
             'datasets' => [
                 [
-                    'label' => 'Battery',
-                    'data' => $batteryData,
+                    'label' => 'Chlorine',
+                    'data' => $battery['data'],
                 ],
             ],
-            'labels' => $labels,
+              'labels' => $data->map(function ($value) use ($frequencyEnum) {
+                if ($frequencyEnum === IntervalFrequency::Weekly) {
+                    $split = explode('-', $value->date);
+                    $value->date = $split[0] . '-W' . $split[1];
+                }
+                return Carbon::parse($value->date)->format('d-m-Y');
+            })->toArray(),
         ];
     }
 
