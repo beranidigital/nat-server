@@ -33,7 +33,7 @@
             ];
             // Ambil data state log
             $stateLogs = StateLog::where('device', $this->device)
-                ->orderBy('created_at', 'asc')
+                ->orderBy('created_at', 'desc')
                 ->limit(1 * 24 * 1)
                 ->get()
                 ->toArray();
@@ -83,7 +83,7 @@
 
         public function table(Table $table): Table
         {
-            $stateLogQuery = StateLog::where('device', $this->device)->limit(24);
+            $stateLogQuery = StateLog::where('device', $this->device);
             return $table
                 ->columns(
                     $this->getFilamentTableColumns()
