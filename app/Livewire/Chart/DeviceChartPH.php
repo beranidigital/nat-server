@@ -13,8 +13,26 @@ use Livewire\Component;
 
 class DeviceChartPH extends ChartWidget
 {
-    protected static ?string $heading = 'PH';
+    public function getDevicesName(): string
+    {
+        $ph = '';
+        $stateLogs = StateLog::where('device', $this->device)
+        ->limit(1 * 24 * 1)
+        ->orderBy('created_at', 'asc')
+        ->get()
+        ->toArray();
 
+        foreach ($stateLogs as $stateLog) {
+            if (isset($stateLog['formatted_sensors']['ph'])) {
+                $ph = $stateLog['formatted_sensors']['ph']['label'];
+            }
+        }
+        return $ph;
+    }
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return $this->getDevicesName();
+    }
     public string $device;
     public array $filters = [];
 

@@ -13,7 +13,26 @@ use Livewire\Component;
 
 class DeviceChartORP extends ChartWidget
 {
-    protected static ?string $heading = 'Sanitation (ORP)';
+    public function getDevicesName(): string
+    {
+        $orp = '';
+        $stateLogs = StateLog::where('device', $this->device)
+        ->limit(1 * 24 * 1)
+        ->orderBy('created_at', 'asc')
+        ->get()
+        ->toArray();
+
+        foreach ($stateLogs as $stateLog) {
+            if (isset($stateLog['formatted_sensors']['orp'])) {
+                $orp = $stateLog['formatted_sensors']['orp']['label'];
+            }
+        }
+        return $orp;
+    }
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return $this->getDevicesName();
+    }
 
     public string $device;
     public array $filters = [];

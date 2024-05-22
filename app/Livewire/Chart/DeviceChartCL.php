@@ -14,8 +14,26 @@ use InvalidArgumentException;
 
 class DeviceChartCL extends ChartWidget
 {
-    protected static ?string $heading = 'Chlorine';
+    public function getDevicesName(): string
+    {
+        $cl = '';
+        $stateLogs = StateLog::where('device', $this->device)
+        ->limit(1 * 24 * 1)
+        ->orderBy('created_at', 'asc')
+        ->get()
+        ->toArray();
 
+        foreach ($stateLogs as $stateLog) {
+            if (isset($stateLog['formatted_sensors']['cl'])) {
+                $cl = $stateLog['formatted_sensors']['cl']['label'];
+            }
+        }
+        return $cl;
+    }
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return $this->getDevicesName();
+    }
     public string $device;
 
     public array $filters = [];

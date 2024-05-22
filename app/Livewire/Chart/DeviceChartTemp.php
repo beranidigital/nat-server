@@ -13,7 +13,26 @@ use Livewire\Component;
 
 class DeviceChartTemp extends ChartWidget
 {
-    protected static ?string $heading = 'Temperature';
+    public function getDevicesName(): string
+    {
+        $temp = '';
+        $stateLogs = StateLog::where('device', $this->device)
+        ->limit(1 * 24 * 1)
+        ->orderBy('created_at', 'asc')
+        ->get()
+        ->toArray();
+
+        foreach ($stateLogs as $stateLog) {
+            if (isset($stateLog['formatted_sensors']['temp'])) {
+                $temp = $stateLog['formatted_sensors']['temp']['label'];
+            }
+        }
+        return $temp;
+    }
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return $this->getDevicesName();
+    }
 
     public string $device;
     public array $filters = [];

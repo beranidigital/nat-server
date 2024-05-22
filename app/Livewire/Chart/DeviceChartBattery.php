@@ -4,6 +4,7 @@ namespace App\Livewire\Chart;
 
 use App\Enums\IntervalFrequency;
 use App\Livewire\ChartPoolDetail;
+use App\Models\AppSettings;
 use App\Models\Pool\StateLog;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
@@ -12,10 +13,29 @@ use Flowframe\Trend\Trend;
 
 class DeviceChartBattery extends ChartWidget
 {
-    protected static ?string $heading = 'Battery';
-
     public string $device;
     public array $filters = [];
+
+    public function getDevicesName(): string
+    {
+        $battery = '';
+        $stateLogs = StateLog::where('device', $this->device)
+        ->limit(1 * 24 * 1)
+        ->orderBy('created_at', 'asc')
+        ->get()
+        ->toArray();
+
+        foreach ($stateLogs as $stateLog) {
+            if (isset($stateLog['formatted_sensors']['battery'])) {
+                $battery = $stateLog['formatted_sensors']['battery']['label'];
+            }
+        }
+        return $battery;
+    }
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return $this->getDevicesName();
+    }
 
     protected function getData(): array
     {
@@ -25,6 +45,7 @@ class DeviceChartBattery extends ChartWidget
         $frequency = $filters['frequency'] ?? 'Weekly';
 
         $frequencyEnum = IntervalFrequency::from($frequency);
+      
 
         $battery = $this->getBattery($this->device);
         $data = Trend::query(StateLog::query()->where('device', $this->device));
@@ -65,7 +86,6 @@ class DeviceChartBattery extends ChartWidget
         }
         return $battery;
     }
-
 
     protected function getType(): string
     {

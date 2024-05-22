@@ -33,7 +33,7 @@
             ];
             // Ambil data state log
             $stateLogs = StateLog::where('device', $this->device)
-                ->orderBy('created_at', 'asc')
+                ->orderBy('created_at', 'desc')
                 ->limit(1 * 24 * 1)
                 ->get()
                 ->toArray();
@@ -71,6 +71,11 @@
 
                 $columns[] = $col;
             }
+                $col = TextColumn::make('created_at')
+                    ->searchable()
+                    ->sortable();
+
+                $columns[] = $col;
 
             return $columns;
         }
@@ -90,7 +95,6 @@
                     ->icon('heroicon-o-document-arrow-down')
                     ->action(function(){
                         $deviceName = request()->get('device', $this->device);
-                        dd($deviceName);
                         return Excel::download(new SensorDataExport($deviceName), "sensor_data_{$deviceName}.xlsx");
                     }),
                     Action::make('export_pdf')

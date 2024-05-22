@@ -12,7 +12,26 @@ use Livewire\Component;
 
 class DeviceChartTds extends ChartWidget
 {
-    protected static ?string $heading = 'Total dissolved solid (TDS)';
+    public function getDevicesName(): string
+    {
+        $tds = '';
+        $stateLogs = StateLog::where('device', $this->device)
+        ->limit(1 * 24 * 1)
+        ->orderBy('created_at', 'asc')
+        ->get()
+        ->toArray();
+
+        foreach ($stateLogs as $stateLog) {
+            if (isset($stateLog['formatted_sensors']['tds'])) {
+                $tds = $stateLog['formatted_sensors']['tds']['label'];
+            }
+        }
+        return $tds;
+    }
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return $this->getDevicesName();
+    }
 
     public string $device;
     public array $filters = [];

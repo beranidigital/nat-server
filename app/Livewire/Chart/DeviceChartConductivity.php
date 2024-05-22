@@ -13,8 +13,26 @@ use Livewire\Component;
 
 class DeviceChartConductivity extends ChartWidget
 {
-    protected static ?string $heading = 'Conductivity';
+    public function getDevicesName(): string
+    {
+        $ce = '';
+        $stateLogs = StateLog::where('device', $this->device)
+        ->limit(1 * 24 * 1)
+        ->orderBy('created_at', 'asc')
+        ->get()
+        ->toArray();
 
+        foreach ($stateLogs as $stateLog) {
+            if (isset($stateLog['formatted_sensors']['ce'])) {
+                $ce = $stateLog['formatted_sensors']['ce']['label'];
+            }
+        }
+        return $ce;
+    }
+    public function getHeading(): string|\Illuminate\Contracts\Support\Htmlable|null
+    {
+        return $this->getDevicesName();
+    }
     public string $device;
     public array $filters = [];
 
