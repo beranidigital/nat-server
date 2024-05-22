@@ -59,7 +59,8 @@ class DeviceChartBattery extends ChartWidget
         });
         $groupedData = $data->groupBy(function ($item) use ($frequencyEnum) {
             if ($frequencyEnum === IntervalFrequency::Weekly) {
-                return Carbon::parse($item['date'])->format('Y-W');
+                $split = explode('-', $item->date);
+                $item->date = $split[0] . '-W' . $split[1];
             }
             return Carbon::parse($item['date'])->format('d-m-Y');
         });
