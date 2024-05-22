@@ -91,8 +91,8 @@ class AppSettings extends Model
             ]);
         }
         if (app()->runningInConsole()) {
-            return (object)['value' => [],
-            'key' => 'devices_name'
+            return (object)['value' => 'devices_name',
+            'key' => [],
         ];
         }
     

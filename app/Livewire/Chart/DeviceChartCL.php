@@ -23,7 +23,7 @@ class DeviceChartCL extends ChartWidget
     protected function getData(): array
     {
         $filters = ChartPoolDetail::extractFilter($this->filters);
-        $startDate = $filters['startDate'] ?? now()->subDays(7);
+        $startDate = $filters['startDate'] ?? now()->subWeek();
         $endDate = $filters['endDate'] ?? now();
         $frequency = $filters['frequency'] ?? 'Weekly';
 

@@ -51,6 +51,8 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                         $iconColor =  Color::Emerald;
                     } elseif ($color >= AppSettings::$yellowScoreMin && $color < AppSettings::$yellowScoreMax) {
                         $iconColor = Color::Yellow;
+                    } elseif ($formattedSensor[$key]['value'] === 'unknown' || $formattedSensor[$key]['value'] == 'unavailable') {
+                        $iconColor = Color::Gray;
                     } else{
                         $iconColor = Color::Red;
                     }
@@ -111,13 +113,13 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                     $imageUrl = url('images/yellow.png');
                     $iconStatus = TextEntry::make('')
                         ->getStateUsing('Caution: Water with suboptimal pH and ORP values may pose risks to health and water quality.')
-                        ->color(Color::Yellow)
+                        ->color(Color::Gray)
                         ->alignCenter();
                 } else {
-                    $imageUrl = url('images/red.png');
+                    $imageUrl = url('images/gray.png');
                     $iconStatus = TextEntry::make('')
                         ->getStateUsing('Bad: Water with suboptimal pH and ORP values may pose risks to health and water quality.')
-                        ->color(Color::Red)
+                        ->color(Color::Gray)
                         ->alignCenter();
                 }
 
@@ -138,19 +140,22 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 } else if($formattedBattery > 25 && $formattedBattery < 70){
                      $battery = TextEntry::make('')->getStateUsing($textBattery)
                     ->icon('heroicon-s-battery-50')->alignEnd()->iconColor(Color::Yellow);
-                } else if($formattedBattery == 'unknown'){
+                } else if($formattedBattery == 'unknown' || $formattedBattery == 'unavailable'){
                     $battery = TextEntry::make('')->getStateUsing('-')
-                    ->icon('heroicon-s-battery-0')->alignEnd()->iconColor(Color::Red);
+                   ->icon('heroicon-s-battery-0')->alignEnd()->iconColor(Color::Gray);
                 } else {
-                     $battery = TextEntry::make('')->getStateUsing($textBattery)
+                     $battery = TextEntry::make('')->getStateUsing('-')
                     ->icon('heroicon-s-battery-0')->alignEnd()->iconColor(Color::Red);
                 }
-               
-
                 $friendlyNameSection = Split::make([$friendlyNameEntry,$battery]);
                 $sections = array_merge([$friendlyNameSection], [$imageEntry], [$iconStatus], $sections);
-                $section = Section::make($sections)->extraAttributes(['onclick' => "window.location.href='admin/pool-detail?device=$device'", 'style' => 'cursor: pointer;']);
-                $deviceSections[$friendlyName] = $section;
+                if($formattedBattery == 'unknown' || $formattedBattery == 'unavailable' || $phColor === Color::Gray || $orpColor  === Color::Gray){
+                    $section = Section::make($sections)->extraAttributes(['onclick' => "window.location.href='admin/pool-detail?device=$device'", 'style' => 'cursor: pointer;background-color: rgb(243, 244, 246)']);
+                    $deviceSections[$friendlyName] = $section;
+                } else{
+                    $section = Section::make($sections)->extraAttributes(['onclick' => "window.location.href='admin/pool-detail?device=$device'", 'style' => 'cursor: pointer;']);
+                    $deviceSections[$friendlyName] = $section;
+                }
             }
         }
         $infolists = [];
