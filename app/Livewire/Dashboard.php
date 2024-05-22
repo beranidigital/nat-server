@@ -118,7 +118,7 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 } else {
                     $imageUrl = url('images/gray.png');
                     $iconStatus = TextEntry::make('')
-                        ->getStateUsing('Nonaktif')
+                        ->getStateUsing('Non Available')
                         ->color(Color::Gray)
                         ->alignCenter();
                 }
