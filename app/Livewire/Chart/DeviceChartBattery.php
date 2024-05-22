@@ -54,7 +54,7 @@ class DeviceChartBattery extends ChartWidget
         $data = $stateLogs->map(function ($stateLog) {
             return [
                 'date' => $stateLog->created_at->format('d-m-Y'),
-                'battery' => $stateLog->formatted_sensors['battery']['value'] ?? 0,
+                'battery' => (float) ($stateLog->formatted_sensors['battery']['value'] ?? 0),
             ];
         });
 
@@ -62,15 +62,18 @@ class DeviceChartBattery extends ChartWidget
             if ($frequencyEnum === IntervalFrequency::Weekly) {
                 return Carbon::parse($item['date'])->format('Y-W');
             }
-            return Carbon::parse($item['date'])->format('d-m-Y');
+            return Carbon::parse($item['date'])->format('Y-m-d');
         });
 
         $labels = $groupedData->keys()->map(function ($date) use ($frequencyEnum) {
             if ($frequencyEnum === IntervalFrequency::Weekly) {
                 $split = explode('-W', $date);
-                $year = $split[0];
-                $week = $split[1];
-                return Carbon::now()->setISODate($year, $week)->startOfWeek()->format('d-m-Y');
+                if (count($split) === 2) {
+                    $year = $split[0];
+                    $week = $split[1];
+                    return Carbon::now()->setISODate($year, $week)->startOfWeek()->format('d-m-Y');
+                }
+                return $date; // Return the original date if split is not as expected
             }
             return Carbon::parse($date)->format('d-m-Y');
         })->toArray();
@@ -101,7 +104,7 @@ class DeviceChartBattery extends ChartWidget
 
         foreach ($stateLogs as $stateLog) {
             if (isset($stateLog['formatted_sensors']['battery'])) {
-                $battery['data'][] = $stateLog['formatted_sensors']['battery']['value'];
+                $battery['data'][] = (float) $stateLog['formatted_sensors']['battery']['value'];
             }
         }
         return $battery;
