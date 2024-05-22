@@ -40,6 +40,10 @@ class DeviceChartBattery extends ChartWidget
                 ],
             ],
               'labels' => $data->map(function ($value) use ($frequencyEnum) {
+                if ($frequencyEnum === IntervalFrequency::Weekly) {
+                    $split = explode('-', $value->date);
+                    $value->date = $split[0] . '-W' . $split[1];
+                }
                 return Carbon::parse($value->date)->format('d-m-Y');
             })->toArray(),
         ];
