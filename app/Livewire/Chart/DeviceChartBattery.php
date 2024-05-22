@@ -53,21 +53,24 @@ class DeviceChartBattery extends ChartWidget
 
         $data = $stateLogs->map(function ($stateLog) {
             return [
-                'date' => $stateLog->created_at->format('d-m-Y'),
+                'date' => $stateLog->created_at->format('Y-m-d'),
                 'battery' => $stateLog->formatted_sensors['battery']['value'] ?? 0,
             ];
         });
+
         $groupedData = $data->groupBy(function ($item) use ($frequencyEnum) {
             if ($frequencyEnum === IntervalFrequency::Weekly) {
-                $split = explode('-', $item['date']);
-                $item['date'] = $split[0] . '-W' . $split[1];
+                return Carbon::parse($item['date'])->format('Y-W');
             }
-            return Carbon::parse($item['date'])->format('d-m-Y');
+            return Carbon::parse($item['date'])->format('Y-m-d');
         });
 
         $labels = $groupedData->keys()->map(function ($date) use ($frequencyEnum) {
             if ($frequencyEnum === IntervalFrequency::Weekly) {
-                return Carbon::parse($date)->format('d-m-Y');
+                $split = explode('-W', $date);
+                $year = $split[0];
+                $week = $split[1];
+                return Carbon::now()->setISODate($year, $week)->startOfWeek()->format('d-m-Y');
             }
             return Carbon::parse($date)->format('d-m-Y');
         })->toArray();
