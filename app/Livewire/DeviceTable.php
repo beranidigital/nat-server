@@ -72,6 +72,7 @@
                 $columns[] = $col;
             }
                 $col = TextColumn::make('created_at')
+                    ->label('Date')
                     ->searchable()
                     ->sortable();
 
