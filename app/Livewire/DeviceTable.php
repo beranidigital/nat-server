@@ -83,8 +83,9 @@
 
         public function table(Table $table): Table
         {
-            $stateLogQuery = StateLog::where('device', $this->device)->limit(1 * 24 * 1);
-            set_time_limit(300);
+            $stateLogQuery = StateLog::where('device', $this->device)->orderBy('created_at', 'desc');
+            set_time_limit(100);
+            ini_set('memory_limit', '512M');
             return $table
                 ->columns(
                     $this->getFilamentTableColumns()
