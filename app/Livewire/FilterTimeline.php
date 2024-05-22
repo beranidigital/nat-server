@@ -25,8 +25,8 @@ class FilterTimeline extends Widget implements HasForms
     public function mount(): void
     {
         $data = request()->all();
-        if(!isset($data['frequency'])) $data['frequency'] = IntervalFrequency::Weekly->name;
-        if(!isset($data['start_date'])) $data['start_date'] = Carbon::now()->subDays(7);
+        if(!isset($data['frequency'])) $data['frequency'] = IntervalFrequency::Daily->name;
+        if(!isset($data['start_date'])) $data['start_date'] = Carbon::now()->subDays(5);
         if(!isset($data['end_date'])) $data['end_date'] = Carbon::now();
         $this->form->fill($data);
         $this->device = request()->get('device');
