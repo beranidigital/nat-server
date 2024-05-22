@@ -38,7 +38,7 @@ class SensorDataExport implements FromQuery, ShouldAutoSize, WithEvents, WithMap
 
     public function query()
     {
-        return StateLog::orderBy('created_at', 'desc')->where('device', $this->deviceName)->paginate(1000);
+        return StateLog::orderBy('created_at', 'desc')->where('device', $this->deviceName);
     }
 
 

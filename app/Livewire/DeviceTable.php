@@ -89,7 +89,7 @@
                     ->label('Export Excel')
                     ->icon('heroicon-o-document-arrow-down')
                     ->action(function(){
-                        $deviceName = request()->get('device', $this->device);
+                        $deviceName = request()->get('device', $this->device)->limit(1 * 24 * 1);
                         return Excel::download(new SensorDataExport($deviceName), "sensor_data_{$deviceName}.xlsx");
                     }),
                     Action::make('export_pdf')
