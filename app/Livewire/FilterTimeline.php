@@ -45,7 +45,8 @@ class FilterTimeline extends Widget implements HasForms
                     ->native(false),
                 DatePicker::make('end_date')
                     ->displayFormat('d-m-Y')
-                    ->native(false),
+                    ->native(false)->reactive() // Menambahkan reactive untuk memicu perubahan
+                    ->afterStateUpdated(fn () => $this->create()),
             ])
             ->statePath('data');
     }

@@ -48,7 +48,7 @@ class DeviceChartBattery extends ChartWidget
       
 
         $battery = $this->getBattery($this->device);
-        $data = Trend::query(StateLog::query()->where('device', $this->device));
+        $data = Trend::query(StateLog::query()->where('device', $battery));
         if ($startDate && $endDate) {
             $data = $data->between($startDate, $endDate);
         }
@@ -57,7 +57,9 @@ class DeviceChartBattery extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Battery',
-                    'data' => $battery['data'],
+                    'data' => $data->map(function ($value){
+                        return $value->data;
+                    }),
                 ],
             ],
               'labels' => $data->map(function ($value) use ($frequencyEnum) {
