@@ -78,7 +78,7 @@ class WaterpoolController extends Controller
             case 'tds':
                 return StatusController::formatTDS($value);
             case 'temp':
-                return StatusController::formatTemperature(floatval($value));
+                return StatusController::formatTemperature($value);
             case 'cl':
                 return StatusController::formatChlorine($value);
             case 'battery':
@@ -98,6 +98,9 @@ class WaterpoolController extends Controller
 
     public static function calculateTDS(mixed $ec)
     {
+        if($ec == 'unknown' || $ec == 'unvailable'){
+            return $ec;
+        }
         $ec = floatval($ec);
         return $ec * 0.5;
     }

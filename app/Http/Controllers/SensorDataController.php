@@ -141,7 +141,7 @@ class SensorDataController extends Controller
             $sensors[$entityName] = [
                 'data' => $data['data'],
                 'timestamp' => $data['timestamp'],
-                'format' => WaterpoolController::formatSensor('tds', WaterpoolController::calculateTDS(count($data['data']) > 0 ? $data['data'][0] : 0)),
+                'format' => WaterpoolController::formatSensor('tds', WaterpoolController::calculateTDS(count($data['data']) > 0 ? $data['data'][0] : 'unknown')),
             ];
             foreach ($data['data'] as $i => $value) {
                 $sensors[$entityName]['data'][$i] = WaterpoolController::calculateTDS($value);

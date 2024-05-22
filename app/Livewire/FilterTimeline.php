@@ -45,8 +45,7 @@ class FilterTimeline extends Widget implements HasForms
                     ->native(false),
                 DatePicker::make('end_date')
                     ->displayFormat('d-m-Y')
-                    ->native(false)
-                    ->extraAttributes(['wire:change' => 'create']),
+                    ->native(false),
             ])
             ->statePath('data');
     }

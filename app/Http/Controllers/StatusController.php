@@ -141,7 +141,7 @@ class StatusController extends Controller
     public static function formatTemperature($value)
     {
 
-        $formattedValue = number_format($value, 2, '.', '');
+        $formattedValue = $value;
 
         return [
             'value' => $formattedValue,
@@ -191,7 +191,7 @@ class StatusController extends Controller
     public static function formatTDS($value)
     {
         return [
-            'value' => intval($value),
+            'value' => $value,
             'unit' => 'ppm',
             'label' => __('translation.tds'),
         ];

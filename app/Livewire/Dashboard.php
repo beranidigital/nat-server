@@ -118,7 +118,7 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 } else {
                     $imageUrl = url('images/gray.png');
                     $iconStatus = TextEntry::make('')
-                        ->getStateUsing('Bad: Water with suboptimal pH and ORP values may pose risks to health and water quality.')
+                        ->getStateUsing('Nonaktif')
                         ->color(Color::Gray)
                         ->alignCenter();
                 }
