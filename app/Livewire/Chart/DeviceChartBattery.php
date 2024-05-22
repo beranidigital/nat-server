@@ -9,7 +9,6 @@ use App\Models\Pool\StateLog;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
-use Flowframe\Trend\TrendValue;
 
 
 class DeviceChartBattery extends ChartWidget
@@ -46,31 +45,44 @@ class DeviceChartBattery extends ChartWidget
         $frequency = $filters['frequency'] ?? 'Weekly';
 
         $frequencyEnum = IntervalFrequency::from($frequency);
-      
 
-        $battery = $this->getBattery($this->device);
-        $data = Trend::query(StateLog::query()->where('device', $battery));
-        if ($startDate && $endDate) {
-            $data = $data->between($startDate, $endDate);
-        }
-        $data = $data->interval($frequencyEnum->toTrendInterval())->count();
+        $stateLogs = StateLog::where('device', $this->device)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $data = $stateLogs->map(function ($stateLog) {
+            return [
+                'date' => $stateLog->created_at->format('Y-m-d'),
+                'battery' => $stateLog->formatted_sensors['battery']['value'] ?? 0,
+            ];
+        });
+        $groupedData = $data->groupBy(function ($item) use ($frequencyEnum) {
+            if ($frequencyEnum === IntervalFrequency::Weekly) {
+                return Carbon::parse($item['date'])->format('Y-W');
+            }
+            return Carbon::parse($item['date'])->format('Y-m-d');
+        });
+
+        $labels = $groupedData->keys()->map(function ($date) use ($frequencyEnum) {
+            if ($frequencyEnum === IntervalFrequency::Weekly) {
+                return Carbon::parse($date)->format('d-m-Y');
+            }
+            return Carbon::parse($date)->format('d-m-Y');
+        })->toArray();
+
+        $batteryData = $groupedData->map(function ($items) {
+            return $items->sum('battery');
+        })->toArray();
+
         return [
             'datasets' => [
                 [
                     'label' => 'Battery',
-                    'data' => $data->map(function ($value){
-                        return $value->data;
-                    }),
-                ],  
+                    'data' => $batteryData,
+                ],
             ],
-              'labels' => $data->map(function ($value) use ($frequencyEnum) {
-                if ($frequencyEnum === IntervalFrequency::Weekly) {
-                    $split = explode('-', $value->date);
-                    $value->date = $split[0] . '-W' . $split[1];
-                    return Carbon::parse($value->date)->format('d-m-Y');
-                }
-                return Carbon::parse($value->date)->format('d-m-Y');
-            })->toArray(),
+            'labels' => $labels,
         ];
     }
 
