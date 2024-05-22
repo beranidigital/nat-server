@@ -9,6 +9,7 @@ use App\Models\Pool\StateLog;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
+use Flowframe\Trend\TrendValue;
 
 
 class DeviceChartBattery extends ChartWidget
@@ -57,9 +58,7 @@ class DeviceChartBattery extends ChartWidget
             'datasets' => [
                 [
                     'label' => 'Battery',
-                    'data' => $data->map(function ($value){
-                        return $value->data;
-                    }),
+                    'data' => $data->map(fn (TrendValue $value) => $value->aggregate)->toArray(),
                 ],
             ],
               'labels' => $data->map(function ($value) use ($frequencyEnum) {
