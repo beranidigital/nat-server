@@ -13,9 +13,6 @@ use Flowframe\Trend\Trend;
 
 class DeviceChartBattery extends ChartWidget
 {
-    public string $device;
-    public array $filters = [];
-
     public function getDevicesName(): string
     {
         $battery = '';
@@ -36,6 +33,9 @@ class DeviceChartBattery extends ChartWidget
     {
         return $this->getDevicesName();
     }
+    public string $device;
+
+    public array $filters = [];
 
     protected function getData(): array
     {
@@ -55,7 +55,7 @@ class DeviceChartBattery extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Battery',
+                    'label' => 'Chlorine',
                     'data' => $battery['data'],
                 ],
             ],
@@ -80,7 +80,7 @@ class DeviceChartBattery extends ChartWidget
 
         foreach ($stateLogs as $stateLog) {
             if (isset($stateLog['formatted_sensors']['battery'])) {
-                $battery['data'][] = (float) $stateLog['formatted_sensors']['battery']['value'];
+                $battery['data'][] = $stateLog['formatted_sensors']['battery']['value'];
             }
         }
         return $battery;
