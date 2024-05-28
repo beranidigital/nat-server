@@ -39,9 +39,9 @@ class DeviceChartTds extends ChartWidget
     protected function getData(): array
     {
         $filters = ChartPoolDetail::extractFilter($this->filters);
-        $startDate = $filters['startDate'] ?? now()->subDays(5);
+        $startDate = $filters['startDate'] ?? now()->subDay();
         $endDate = $filters['endDate'] ?? now();
-        $frequency = $filters['frequency'] ?? 'Weekly';
+        $frequency = $filters['frequency'] ?? 'Daily';
 
         $frequencyEnum = IntervalFrequency::from($frequency);
 
