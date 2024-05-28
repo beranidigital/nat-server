@@ -40,8 +40,8 @@ class DeviceChartBattery extends ChartWidget
     protected function getData(): array
     {
         $filters = ChartPoolDetail::extractFilter($this->filters);
-        $startDate = $filters['startDate'] ?? now()->startOfMonth();
-        $endDate = $filters['endDate'] ?? now()->startOfMonth();
+        $startDate = $filters['startDate'] ?? now()->startOfWeek()->subDays(2);
+        $endDate = $filters['endDate'] ?? now()->endOfWeek();
         $frequency = $filters['frequency'] ?? 'Daily';
 
         $frequencyEnum = IntervalFrequency::from($frequency);
