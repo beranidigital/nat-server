@@ -25,7 +25,7 @@ class FilterTimeline extends Widget implements HasForms
     public function mount(): void
     {
         $data = request()->all();
-        if(!isset($data['frequency'])) $data['frequency'] = IntervalFrequency::Daily->name;
+        if(!isset($data['frequency'])) $data['frequency'] = IntervalFrequency::Weekly->name;
         if(!isset($data['start_date'])) $data['start_date'] = Carbon::now()->subDays(7);
         if(!isset($data['end_date'])) $data['end_date'] = Carbon::now();
         $this->form->fill($data);
@@ -38,7 +38,7 @@ class FilterTimeline extends Widget implements HasForms
             ->columns(3)
             ->schema([
                 Select::make('frequency')
-                    ->default(IntervalFrequency::Daily->name)
+                    ->default(IntervalFrequency::Weekly->name)
                     ->options(IntervalFrequency::class),
                 DatePicker::make('start_date')
                     ->displayFormat('d-m-Y')
