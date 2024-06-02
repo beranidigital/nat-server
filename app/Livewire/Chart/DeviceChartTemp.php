@@ -91,7 +91,7 @@ class DeviceChartTemp extends ChartWidget
             if (in_array($date, $temp['date'])) {
                 $indices = array_keys($temp['date'], $date);
                 foreach ($indices as $index) {
-                    if($temp['data'][$index] == 'unknown' || $temp['data'][$index] == 'unvailable'){
+                    if($temp['data'][$index] == 'unknown' || $temp['data'][$index] == 'unavailable'){
                         $filteredData[] = 0;
                         $filteredDates[] = $date;
                     } else {
@@ -104,6 +104,7 @@ class DeviceChartTemp extends ChartWidget
                 $filteredDates[] = $date;
             }
         }
+        dd($filteredData, $filteredDates, $temp['data'], $dates);
         return [
             'datasets' => [
                 [

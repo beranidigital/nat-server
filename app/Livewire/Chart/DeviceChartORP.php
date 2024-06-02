@@ -91,7 +91,7 @@ class DeviceChartORP extends ChartWidget
             if (in_array($date, $orp['date'])) {
                 $indices = array_keys($orp['date'], $date);
                 foreach ($indices as $index) {
-                    if($orp['data'][$index] == 'unknown' || $orp['data'][$index] == 'unvailable'){
+                    if($orp['data'][$index] == 'unknown' || $orp['data'][$index] == 'unavailable'){
                         $filteredData[] = 0;
                         $filteredDates[] = $date;
                     } else {

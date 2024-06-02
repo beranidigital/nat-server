@@ -90,7 +90,7 @@ class DeviceChartPH extends ChartWidget
             if (in_array($date, $ph['date'])) {
                 $indices = array_keys($ph['date'], $date);
                 foreach ($indices as $index) {
-                    if($ph['data'][$index] == 'unknown' || $ph['data'][$index] == 'unvailable'){
+                    if($ph['data'][$index] == 'unknown' || $ph['data'][$index] == 'unavailable'){
                         $filteredData[] = 0;
                         $filteredDates[] = $date;
                     } else {
