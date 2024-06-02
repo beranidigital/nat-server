@@ -86,7 +86,6 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                     $sections[] = $splitText;
                 }
 
-                // Determine image URL based on PH and ORP colors
                 $imageUrl = '';
                 if ($phColor === Color::Emerald && $orpColor === Color::Emerald) {
                     $imageUrl = url('images/green.png');
@@ -157,10 +156,10 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 $backgroundColor = $allUnknown ? 'background-color: rgb(243, 244, 246)' : 'background-color: white';
                 $section = Section::make($sections)
                     ->extraAttributes([
-                        'onclick' => "window.location.href='admin/pool-detail?device=$device'", 
+                        'onclick' => "window.location.href='admin/pool-detail?device=$device'",
                         'style' => "cursor: pointer; $backgroundColor"
                     ]);
-                
+
                 $deviceSections[$friendlyName] = $section;
             }
         }

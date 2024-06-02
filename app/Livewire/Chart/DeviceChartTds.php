@@ -120,27 +120,41 @@ class DeviceChartTds extends ChartWidget
     {
 
         $tds = [];
+        $now =  \Illuminate\Support\Carbon::now();
 
-        $stateLogs = StateLog::where('device', $device)
+        for ($i = 0; $i < 7; $i++) {
+            $startOfDay = $now->copy()->subDays($i)->startOfDay(); // 00:00:00
+            $midDay = $startOfDay->copy()->addHours(12); // 12:00:00
+            $endOfDay = $startOfDay->copy()->endOfDay(); // 23:59:59
 
-            ->limit(1 * 24 * 1)
+            $morningLog = StateLog::where('device', $device)
+                ->whereBetween('created_at', [$startOfDay, $midDay])
+                ->orderBy('created_at', 'asc')
+                ->first();
 
-            ->orderBy('created_at', 'asc')
+            $eveningLog = StateLog::where('device', $device)
+                ->whereBetween('created_at', [$midDay, $endOfDay])
+                ->orderBy('created_at', 'asc')
+                ->first();
 
-            ->get()
-
-            ->toArray();
-
-
-
-        foreach ($stateLogs as $stateLog) {
-            $tds['date'][] = Carbon::parse($stateLog['created_at'])->format('d-m-Y');
-            if (isset($stateLog['formatted_sensors']['tds'])) {
-                $tds['data'][] = $stateLog['formatted_sensors']['tds']['value'];
+            if ($morningLog) {
+                $tds['date'][] = $startOfDay->format('d-m-Y');
+                if (isset($morningLog['formatted_sensors']['tds'])) {
+                    $tds['data'][] = $morningLog['formatted_sensors']['tds']['value'];
+                } else {
+                    $tds['data'][] = 0;
+                }
             }
 
+            if ($eveningLog) {
+                $tds['date'][] = $endOfDay->format('d-m-Y');
+                if (isset($eveningLog['formatted_sensors']['tds'])) {
+                    $tds['data'][] = $eveningLog['formatted_sensors']['tds']['value'];
+                } else {
+                    $tds['data'][] = 0;
+                }
+            }
         }
-
         return $tds;
 
     }
