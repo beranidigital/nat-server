@@ -1,4 +1,4 @@
-# Nat Wave Server
+# NatWave Server
 
 # Setup
 
