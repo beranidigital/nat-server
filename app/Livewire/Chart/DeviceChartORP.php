@@ -141,7 +141,41 @@ class DeviceChartORP extends ChartWidget
             }
 
         }
+        $now =  \Illuminate\Support\Carbon::now();
 
+        for ($i = 0; $i < 7; $i++) {
+            $startOfDay = $now->copy()->subDays($i)->startOfDay(); // 00:00:00
+            $midDay = $startOfDay->copy()->addHours(12); // 12:00:00
+            $endOfDay = $startOfDay->copy()->endOfDay(); // 23:59:59
+
+            $morningLog = StateLog::where('device', $device)
+                ->whereBetween('created_at', [$startOfDay, $midDay])
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            $eveningLog = StateLog::where('device', $device)
+                ->whereBetween('created_at', [$midDay, $endOfDay])
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            if ($morningLog) {
+                $orp['date'][] = $startOfDay->format('d-m-Y');
+                if (isset($morningLog['formatted_sensors']['orp'])) {
+                    $orp['data'][] = $morningLog['formatted_sensors']['orp']['value'];
+                } else {
+                    $orp['data'][] = 0;
+                }
+            }
+
+            if ($eveningLog) {
+                $orp['date'][] = $endOfDay->format('d-m-Y');
+                if (isset($eveningLog['formatted_sensors']['orp'])) {
+                    $orp['data'][] = $eveningLog['formatted_sensors']['orp']['value'];
+                } else {
+                    $orp['data'][] = 0;
+                }
+            }
+        }
         return $orp;
 
     }

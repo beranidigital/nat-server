@@ -117,16 +117,39 @@ class DeviceChartCL extends ChartWidget
     public function getCl(string $device): ?array
     {
         $cl = [];
-        $stateLogs = StateLog::where('device', $device)
-            ->limit(1 * 24 * 1)
-            ->orderBy('created_at', 'asc')
-            ->get()
-            ->toArray();
+        $now =  Carbon::now();
 
-        foreach ($stateLogs as $stateLog) {
-            $cl['date'][] = \Illuminate\Support\Carbon::parse($stateLog['created_at'])->format('d-m-Y');
-            if (isset($stateLog['formatted_sensors']['cl'])) {
-                $cl['data'][] = $stateLog['formatted_sensors']['cl']['value'];
+        for ($i = 0; $i < 7; $i++) {
+            $startOfDay = $now->copy()->subDays($i)->startOfDay(); // 00:00:00
+            $midDay = $startOfDay->copy()->addHours(12); // 12:00:00
+            $endOfDay = $startOfDay->copy()->endOfDay(); // 23:59:59
+
+            $morningLog = StateLog::where('device', $device)
+                ->whereBetween('created_at', [$startOfDay, $midDay])
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            $eveningLog = StateLog::where('device', $device)
+                ->whereBetween('created_at', [$midDay, $endOfDay])
+                ->orderBy('created_at', 'asc')
+                ->first();
+
+            if ($morningLog) {
+                $cl['date'][] = $startOfDay->format('d-m-Y');
+                if (isset($morningLog['formatted_sensors']['cl'])) {
+                    $cl['data'][] = $morningLog['formatted_sensors']['cl']['value'];
+                } else {
+                    $cl['data'][] = 0;
+                }
+            }
+
+            if ($eveningLog) {
+                $cl['date'][] = $endOfDay->format('d-m-Y');
+                if (isset($eveningLog['formatted_sensors']['cl'])) {
+                    $cl['data'][] = $eveningLog['formatted_sensors']['cl']['value'];
+                } else {
+                    $cl['data'][] = 0;
+                }
             }
         }
         return $cl;
