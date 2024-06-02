@@ -112,4 +112,65 @@ class WaterpoolController extends Controller
     {
         return self::$allowedSensors;;
     }
+
+    public static function unknownSensors(): array
+    {
+        return self::$uknownSensors;
+    }
+    public static function unavailable():array
+    {
+        return self::$unavailableSensors;
+    }
+    public static $uknownSensors = [
+          "battery" => [
+            "value" => "unknown",
+          ],
+          "cl" => [
+            "value" => "unknown",
+          ],
+          "ec" => [
+            "value" => "unknown",
+          ],
+          "orp" => [
+            "value" => "unknown",
+          ],
+          "ph" => [
+              "value" => "unknown",
+          ],
+          "temp" => [
+            "value" => "unknown",
+          ],
+          "salt" =>[
+              "value" => "unknown",
+          ],
+          "tds" => [
+              "value" => "unknown",
+          ],
+        ];
+    public static $unavailableSensors = [
+        "battery" => [
+            "value" => "unavailable",
+        ],
+        "cl" => [
+            "value" => "unavailable",
+        ],
+        "ec" => [
+            "value" => "unavailable",
+        ],
+        "orp" => [
+            "value" => "unavailable",
+        ],
+        "ph" => [
+            "value" => "unavailable",
+        ],
+        "temp" => [
+            "value" => "unavailable",
+        ],
+        "salt" =>[
+            "value" => "unavailable",
+        ],
+        "tds" => [
+            "value" => "unavailable",
+        ],
+    ];
 }

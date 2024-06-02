@@ -16,15 +16,14 @@ use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Section;
 use Filament\Support\Colors\Color;
 
-class Dashboard extends BaseWidget //extends Page implements HasInfolists
+class Dashboard extends BaseWidget
 {
-    // use InteractsWithInfolists;
-
     public $data;
 
     protected function getStats(): array
     {
         $devices = AppSettings::getDevicesName()->value;
+        asort($devices);
         $deviceSections = [];
         $allowedSensors = WaterpoolController::getAllowedSensors();
         foreach ($devices as $device => $friendlyName) {
@@ -37,7 +36,8 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 $formattedBattery = $sensorData['sensors']['battery'];
                 $formattedSensor = $sensorData['formatted_sensors'];
                 $labelMappings = $formattedSensor;
-
+                $unknownSensor = WaterpoolController::unknownSensors();
+                $unavailableSensors = WaterpoolController::unavailable();
                 $sections = [];
                 $phColor = null;
                 $orpColor = null;
@@ -52,7 +52,7 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                         $iconColor = Color::Emerald;
                     } elseif ($color >= AppSettings::$yellowScoreMin && $color < AppSettings::$yellowScoreMax) {
                         $iconColor = Color::Yellow;
-                    } elseif ($formattedSensor[$key]['value'] === 'unknown' || $formattedSensor[$key]['value'] == 'unavailable') {
+                    } elseif ($unknownSensor || $unavailableSensors) {
                         $iconColor = Color::Gray;
                     } else {
                         $iconColor = Color::Red;
@@ -69,7 +69,7 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                         ->icon('heroicon-s-stop')
                         ->iconColor($iconColor);
 
-                    if ($formattedSensor[$key]['value'] == 'unknown' || $formattedSensor[$key]['value'] == 'unavailable') {
+                    if ($unknownSensor || $unavailableSensors) {
                         $formattedSensor[$key]['value'] = '-';
                         $formattedSensor[$key]['unit'] = '';
                     } else {
@@ -117,11 +117,17 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                         ->getStateUsing('Caution: Water with suboptimal pH and ORP values may pose risks to health and water quality.')
                         ->color(Color::Gray)
                         ->alignCenter();
-                } else {
+                } elseif ($unavailableSensors || $unknownSensor){
                     $imageUrl = url('images/gray.png');
                     $iconStatus = TextEntry::make('')
                         ->getStateUsing('Non Available')
                         ->color(Color::Gray)
+                        ->alignCenter();
+                } else {
+                    $imageUrl = url('images/red.png');
+                    $iconStatus = TextEntry::make('')
+                        ->getStateUsing('Bad: Water with suboptimal pH and ORP values may pose risks to health and water quality.')
+                        ->color(Color::Red)
                         ->alignCenter();
                 }
 
@@ -142,7 +148,7 @@ class Dashboard extends BaseWidget //extends Page implements HasInfolists
                 } else if ($formattedBattery > 25 && $formattedBattery < 70) {
                     $battery = TextEntry::make('')->getStateUsing($textBattery)
                         ->icon('heroicon-s-battery-50')->alignEnd()->iconColor(Color::Yellow);
-                } else if ($formattedBattery == 'unknown' || $formattedBattery == 'unavailable') {
+                } else if ($unknownSensor || $unavailableSensors) {
                     $battery = TextEntry::make('')->getStateUsing('-')
                         ->icon('heroicon-s-battery-0')->alignEnd()->iconColor(Color::Gray);
                     $allUnknown = false;
