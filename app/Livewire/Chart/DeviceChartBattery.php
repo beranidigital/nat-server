@@ -177,7 +177,6 @@ class DeviceChartBattery extends ChartWidget
             }
         }
 
-
         return $battery;
 
     }
