@@ -2,7 +2,6 @@
 namespace App\Livewire;
 
 use App\Enums\IntervalFrequency;
-use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -25,9 +24,9 @@ class FilterTimeline extends Widget implements HasForms
     public function mount(): void
     {
         $data = request()->all();
-        if(!isset($data['frequency'])) $data['frequency'] = IntervalFrequency::Weekly->name;
-        if(!isset($data['start_date'])) $data['start_date'] = Carbon::now()->subDays(7);
-        if(!isset($data['end_date'])) $data['end_date'] = Carbon::now();
+        if(!isset($data['frequency'])) $data['frequency'] = IntervalFrequency::Daily->name;
+        if(!isset($data['start_date'])) $data['start_date'] = \Illuminate\Support\Carbon::now()->subDays(7)->startOfDay();
+        if(!isset($data['end_date'])) $data['end_date'] = \Illuminate\Support\Carbon::now();
         $this->form->fill($data);
         $this->device = request()->get('device');
     }
@@ -38,14 +37,14 @@ class FilterTimeline extends Widget implements HasForms
             ->columns(3)
             ->schema([
                 Select::make('frequency')
-                    ->default(IntervalFrequency::Weekly->name)
+                    ->default(IntervalFrequency::Daily->name)
                     ->options(IntervalFrequency::class),
                 DatePicker::make('start_date')
                     ->displayFormat('d-m-Y')
                     ->native(false),
                 DatePicker::make('end_date')
                     ->displayFormat('d-m-Y')
-                    ->native(false)->reactive() // Menambahkan reactive untuk memicu perubahan
+                    ->native(false)->reactive()
                     ->afterStateUpdated(fn () => $this->create()),
             ])
             ->statePath('data');

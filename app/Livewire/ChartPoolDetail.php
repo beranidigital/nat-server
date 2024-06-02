@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Enums\IntervalFrequency;
 use App\Models\Pool\StateLog;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Livewire\Component;
 
 class ChartPoolDetail extends Component
@@ -17,13 +17,15 @@ class ChartPoolDetail extends Component
     public static function extractFilter(array $filters): array
     {
 
-        $startDate = $filters['start_date'] ?? null;
-        $endDate = $filters['end_date'] ?? null;
+        $startDate = $filters['start_date'] ?? Carbon::now()->subDays(7)->startOfDay();
+        $endDate = $filters['end_date'] ?? Carbon::now()->endOfDay();
 
         if ($startDate) $startDate = \Illuminate\Support\Carbon::parse($startDate);
         if ($endDate) $endDate = \Illuminate\Support\Carbon::parse($endDate);
+        if (!$startDate) $startDate = Carbon::parse(StateLog::min('created_at'));
+        if (!$endDate) $endDate = Carbon::parse(StateLog::max('created_at'));
 
-        $frequency = $filters['frequency'] ?? IntervalFrequency::Weekly->name;
+        $frequency = $filters['frequency'] ?? IntervalFrequency::Daily->name;
 
 
         return [
