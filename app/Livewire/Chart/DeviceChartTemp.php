@@ -104,7 +104,6 @@ class DeviceChartTemp extends ChartWidget
                 $filteredDates[] = $date;
             }
         }
-        dd($filteredData, $filteredDates, $temp['data'], $dates);
         return [
             'datasets' => [
                 [
