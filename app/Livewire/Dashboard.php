@@ -115,11 +115,7 @@ class Dashboard extends BaseWidget
                             continue;
                         }
                         if ($color >= AppSettings::$greenScoreMin && $color < AppSettings::$greenScoreMax) {
-                            if($formattedSensor['temp']['value'] == 32.3){
-                                $iconColor = Color::Red;
-                            } else {
                                 $iconColor = Color::Emerald;
-                            }
                         } elseif ($color >= AppSettings::$yellowScoreMin && $color < AppSettings::$yellowScoreMax) {
                             $iconColor = Color::Yellow;
                         } else {
