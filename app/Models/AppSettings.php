@@ -27,8 +27,8 @@ class AppSettings extends Model
 
     public static $greenScoreMax = 1.0;
     public static $greenScoreMin = 0.7;
-    public static $yellowScoreMax = 0.7;
-    public static $yellowScoreMin = 0.4;
+    public static $yellowScoreMax = 0.69;
+    public static $yellowScoreMin = 0.39;
     public static $ignoreSensors = [
         'timestamp',
         'latestTimestamp',
