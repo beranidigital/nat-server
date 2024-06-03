@@ -92,8 +92,6 @@ class Dashboard extends BaseWidget
                     $friendlyNameEntry = TextEntry::make('')->getStateUsing($friendlyName)->size('lg')->weight(FontWeight::Bold);
                     if (!is_numeric($formattedBattery)) {
                         $textBattery = 'N/A';
-                    } else {
-                        $textBattery = $formattedBattery . '%';
                     }
 
                     $battery = TextEntry::make('')->getStateUsing($textBattery)
@@ -195,11 +193,7 @@ class Dashboard extends BaseWidget
                         ->extraAttributes(['style' => 'margin-left:40%;']);
                     $friendlyNameEntry = TextEntry::make('')->getStateUsing($friendlyName)->size('lg')->weight(FontWeight::Bold);
 
-                    if (!is_numeric($formattedBattery)) {
-                        $textBattery = $formattedBattery;
-                    } else {
-                        $textBattery = $formattedBattery . '%';
-                    }
+                    $textBattery = $formattedBattery . '%';
 
                     if ($formattedBattery > 70 && $formattedBattery <= 100) {
                         $battery = TextEntry::make('')->getStateUsing($textBattery)
