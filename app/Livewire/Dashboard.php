@@ -115,7 +115,7 @@ class Dashboard extends BaseWidget
                             continue;
                         }
                         if ($color >= AppSettings::$greenScoreMin && $color < AppSettings::$greenScoreMax) {
-                                $iconColor = Color::Emerald;
+                            $iconColor = Color::Emerald;
                         } elseif ($color >= AppSettings::$yellowScoreMin && $color < AppSettings::$yellowScoreMax) {
                             $iconColor = Color::Yellow;
                         } else {
