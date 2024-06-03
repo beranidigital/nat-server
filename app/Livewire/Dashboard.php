@@ -27,6 +27,7 @@ class Dashboard extends BaseWidget
         $allowedSensors = WaterpoolController::getAllowedSensors();
         $unknownSensorValues = array_column(WaterpoolController::unknownSensors(), 'value');
         $unavailableSensorValues = array_column(WaterpoolController::unavailable(), 'value');
+        $message = AppSettings::getMessage()->value;
 
         foreach ($devices as $device => $friendlyName) {
             $stateLog = StateLog::where('device', $device)
@@ -37,6 +38,7 @@ class Dashboard extends BaseWidget
                 $formattedStatus = $sensorData['scores'];
                 $formattedBattery = $sensorData['sensors']['battery'];
                 $formattedSensor = $sensorData['formatted_sensors'];
+                $messageSensor = $message;
                 $labelMappings = $formattedSensor;
 
                 $sections = [];
@@ -53,11 +55,10 @@ class Dashboard extends BaseWidget
                         break;
                     }
                 }
-
                 if ($allUnknown) {
                     $imageUrl = url('images/gray.png');
                     $iconStatus = TextEntry::make('')
-                        ->getStateUsing('Non Available')
+                        ->getStateUsing($messageSensor['disabled'])
                         ->color(Color::Gray)
                         ->alignCenter();
                     $iconColor = Color::Gray;
@@ -89,14 +90,13 @@ class Dashboard extends BaseWidget
                         ->defaultImageUrl($imageUrl)
                         ->extraAttributes(['style' => 'margin-left:40%;']);
                     $friendlyNameEntry = TextEntry::make('')->getStateUsing($friendlyName)->size('lg')->weight(FontWeight::Bold);
-
                     if (!is_numeric($formattedBattery)) {
-                        $textBattery = $formattedBattery;
+                        $textBattery = 'N/A';
                     } else {
                         $textBattery = $formattedBattery . '%';
                     }
 
-                    $battery = TextEntry::make('')->getStateUsing('-')
+                    $battery = TextEntry::make('')->getStateUsing($textBattery)
                         ->icon('heroicon-s-battery-0')->alignEnd()->iconColor(Color::Gray);
 
                     $friendlyNameSection = Split::make([$friendlyNameEntry, $battery]);
@@ -117,7 +117,6 @@ class Dashboard extends BaseWidget
                         if (!in_array($key, $allowedSensors)) {
                             continue;
                         }
-
                         if ($color >= AppSettings::$greenScoreMin && $color < AppSettings::$greenScoreMax) {
                             $iconColor = Color::Emerald;
                         } elseif ($color >= AppSettings::$yellowScoreMin && $color < AppSettings::$yellowScoreMax) {
@@ -125,7 +124,6 @@ class Dashboard extends BaseWidget
                         } else {
                             $iconColor = Color::Red;
                         }
-
                         if ($key === 'ph') {
                             $phColor = $iconColor;
                         } elseif ($key === 'orp') {
@@ -155,37 +153,37 @@ class Dashboard extends BaseWidget
                         if ($phColor === Color::Emerald && $orpColor === Color::Emerald) {
                             $imageUrl = url('images/green.png');
                             $iconStatus = TextEntry::make('')
-                                ->getStateUsing('Good: Water with optimal pH and proper ORP values is considered safe and conducive to health.')
+                                ->getStateUsing($messageSensor['good'])
                                 ->color(Color::Emerald)
                                 ->alignCenter();
                         } elseif (($phColor === Color::Red && $orpColor === Color::Red)) {
                             $imageUrl = url('images/red.png');
                             $iconStatus = TextEntry::make('')
-                                ->getStateUsing('Bad: Water with suboptimal pH and ORP values may pose risks to health and water quality.')
+                                ->getStateUsing($messageSensor['bad'])
                                 ->color(Color::Red)
                                 ->alignCenter();
                         } elseif ($orpColor === Color::Red) {
                             $imageUrl = url('images/red.png');
                             $iconStatus = TextEntry::make('')
-                                ->getStateUsing('Bad: Water with suboptimal ORP value may pose risks to health and water quality.')
+                                ->getStateUsing($messageSensor['badOrp'])
                                 ->color(Color::Red)
                                 ->alignCenter();
                         } elseif ($phColor === Color::Red) {
                             $imageUrl = url('images/red.png');
                             $iconStatus = TextEntry::make('')
-                                ->getStateUsing('Bad: Water with suboptimal pH value may pose risks to health and water quality.')
+                                ->getStateUsing($messageSensor['badPh'])
                                 ->color(Color::Red)
                                 ->alignCenter();
                         } elseif (($phColor === Color::Yellow || $orpColor === Color::Yellow)) {
                             $imageUrl = url('images/yellow.png');
                             $iconStatus = TextEntry::make('')
-                                ->getStateUsing('Caution: Water with suboptimal pH and ORP values may pose risks to health and water quality.')
+                                ->getStateUsing($messageSensor['caution'])
                                 ->color(Color::Gray)
                                 ->alignCenter();
                         } else {
                             $imageUrl = url('images/red.png');
                             $iconStatus = TextEntry::make('')
-                                ->getStateUsing('Bad: Water with suboptimal pH and ORP values may pose risks to health and water quality.')
+                                ->getStateUsing($messageSensor['bad'])
                                 ->color(Color::Red)
                                 ->alignCenter();
                         }
@@ -200,7 +198,7 @@ class Dashboard extends BaseWidget
                     if (!is_numeric($formattedBattery)) {
                         $textBattery = $formattedBattery;
                     } else {
-                        $textBattery = $formattedBattery . '%';
+                        $textBattery = '0' . '%';
                     }
 
                     if ($formattedBattery > 70 && $formattedBattery <= 100) {

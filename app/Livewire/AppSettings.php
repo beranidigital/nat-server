@@ -88,6 +88,8 @@ class AppSettings extends Component implements HasForms
     {
         $devices = ModelAppSettings::getDevicesName()->value;
         $translation = ModelAppSettings::getTranslation()->value;
+        $message = ModelAppSettings::getMessage()->value;
+        asort($devices);
         if (is_array($devices)) {
             foreach ($devices as $deviceKey => $deviceValue) {
                     $this->data['devices'][$deviceKey] = $deviceValue;
@@ -97,6 +99,11 @@ class AppSettings extends Component implements HasForms
         if (is_array($translation)) {
             foreach ($translation as $translationKey => $translationValue) {
                 $this->data['translation'][$translationKey] = $translationValue;
+            }
+        }
+        if (is_array($message)) {
+            foreach ($message as $messageKey => $messageValue) {
+                $this->data['message'][$messageKey] = $messageValue;
             }
         }
 
@@ -110,7 +117,7 @@ class AppSettings extends Component implements HasForms
                 Grid::make()->schema([
                     Section::make(
                         [...$this->commonSchema(),]
-                    )->columns(2)
+                    ),
                 ]),
             ])
             ->statePath('data');
@@ -120,8 +127,9 @@ class AppSettings extends Component implements HasForms
     {
         $formattedDevices = $this->data['devices'];
         $formattedTranslation = $this->data['translation'];
+        $formattedMessage = $this->data['message'];
         $sections = [];
-        
+
         $deviceInputs = [];
         foreach ($formattedDevices as $deviceKey => $deviceValue) {
             $deviceInputs[] = TextInput::make('devices.' . $deviceKey)
@@ -129,8 +137,7 @@ class AppSettings extends Component implements HasForms
                 ->required();
         }
         $sections[] = Section::make('Device Name')
-        ->schema($deviceInputs)
-        ->columns(2);
+        ->schema($deviceInputs);
 
         $translationInputs = [];
         foreach ($formattedTranslation as $translationKey => $translationValue) {
@@ -139,8 +146,16 @@ class AppSettings extends Component implements HasForms
                 ->required();
         }
         $sections[] = Section::make('Sensor Name')
-        ->schema($translationInputs)
-        ->columns(2);
+        ->schema($translationInputs);
+
+        $messageInputs = [];
+        foreach ($formattedMessage as $messageKey => $messageValue) {
+            $messageInputs[] = TextInput::make('message.' . $messageKey)
+                ->label($messageKey)
+                ->required();
+        }
+        $sections[] = Section::make('Sensor Message')
+            ->schema($messageInputs);
 
         return $sections;
     }
@@ -152,6 +167,7 @@ class AppSettings extends Component implements HasForms
         $dataToUpdate = [
             'devices_name' => $state['devices'],
             'translation' => $state['translation'],
+            'message' => $state['message'],
         ];
         foreach ($dataToUpdate as $key => $value) {
             ModelAppSettings::updateOrCreate(
