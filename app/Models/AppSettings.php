@@ -25,7 +25,7 @@ class AppSettings extends Model
         'value',
     ];
 
-    public static $greenScoreMax = 1.0;
+    public static $greenScoreMax = 0.9;
     public static $greenScoreMin = 0.7;
     public static $yellowScoreMax = 0.69;
     public static $yellowScoreMin = 0.39;
@@ -169,10 +169,10 @@ class AppSettings extends Model
 
     public static $message = [
         'good' => 'Good: Water with optimal pH and proper ORP values is considered safe and conducive to health.',
-        'bad' => 'Bad: Water with suboptimal pH and ORP values may pose risks to health and water quality.',
+        'caution' => 'Caution: Water with suboptimal pH and ORP values may pose risks to health and water quality.',
         'badOrp' => 'Bad: Water with suboptimal ORP value may pose risks to health and water quality.',
         'badPh' => 'Bad: Water with suboptimal pH value may pose risks to health and water quality.',
-        'caution' => 'Caution: Water with suboptimal pH and ORP values may pose risks to health and water quality.',
+        'bad' => 'Bad: Water with suboptimal pH and ORP values may pose risks to health and water quality.',
         'disabled' => 'Non Available'
     ];
 
@@ -227,7 +227,6 @@ class AppSettings extends Model
             $parameterProfile->value = $default;
         }
         $value = $parameterProfile->value;
-        $value['Internasional'] = $default['Internasional']; // don't change this lol
 
         // convert integer score to float based on green and yellow
         foreach ($value as $profile => $parameters) {
@@ -307,7 +306,7 @@ class AppSettings extends Model
             $poolProfileParameter->value = $default;
         }
 
-        $value = self::syncWithDefault($default, $poolProfileParameter->value);
+        $value = $poolProfileParameter->value;
         return $value;
     }
 

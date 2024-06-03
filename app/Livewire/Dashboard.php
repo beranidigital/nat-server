@@ -111,7 +111,6 @@ class Dashboard extends BaseWidget
                 } else {
                     foreach ($formattedStatus as $key => $color) {
                         $label = $labelMappings[$key]['label'] ?? $key;
-
                         if (!in_array($key, $allowedSensors)) {
                             continue;
                         }

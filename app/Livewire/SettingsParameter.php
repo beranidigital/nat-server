@@ -87,6 +87,7 @@ class SettingsParameter extends Component implements HasForms
             'parameter_profile' => self::kvToArray(AppSettings::getParameterProfile()),
             'pool_profile_parameter' => self::kvToArray(AppSettings::getPoolProfileParameter()),
         ];
+
         $this->form->fill($this->data);
     }
 
@@ -103,7 +104,8 @@ class SettingsParameter extends Component implements HasForms
                         ->schema([
                             TextInput::make('name')
                                 ->label('Pool Name')
-                                ->required(),
+                                ->disabled()
+                                ->dehydrated(),
                             Select::make('value')
                                 ->label('Parameter Profile')
                                 ->options($this->getParameters())
@@ -111,46 +113,46 @@ class SettingsParameter extends Component implements HasForms
                 ])),
                 Section::make('Parameter Profile')->schema([
 
-                Repeater::make('parameter_profile')
-                    ->hiddenLabel()
-                    ->reorderableWithDragAndDrop(false)
-                    ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
+                    Repeater::make('parameter_profile')
+                        ->hiddenLabel()
+                        ->reorderableWithDragAndDrop(false)
+                        ->itemLabel(fn(array $state): ?string => $state['name'] ?? null)
 
-                    ->schema([
-                        TextInput::make('name')
-                            ->required()
-                            ->placeholder('Name'),
-                        Repeater::make('value')
-                            ->label("Parameter")
-                            ->columns(7)
-                            ->schema([
-                                Select::make('sensor')->options($this->getSensors()),
-                                TextInput::make('start')
-                                    ->required()
-                                    ->label('Start')
-                                    ->numeric(),
-                                TextInput::make('cs')
-                                    ->label('Caution Start')
-                                    ->required()
-                                    ->numeric(),
-                                TextInput::make('gs')
-                                    ->required()
-                                    ->numeric()
-                                    ->label('Good Start'),
-                                TextInput::make('ge')
-                                    ->required()
-                                    ->label('Good End')
-                                    ->numeric(), // less than or equal
-                                TextInput::make('ce')
-                                    ->required()
-                                    ->label('Caution End')
-                                    ->numeric(), // greater than or equal
-                                TextInput::make('end')
-                                    ->required()
-                                    ->numeric()
-                                    ->label('End'),
-                            ])
-                    ])->reorderable(false)->collapsible()->collapsed()
+                        ->schema([
+                            TextInput::make('name')
+                                ->required()
+                                ->placeholder('Name'),
+                            Repeater::make('value')
+                                ->label("Parameter")
+                                ->columns(7)
+                                ->schema([
+                                    Select::make('sensor')->options($this->getSensors()),
+                                    TextInput::make('start')
+                                        ->required()
+                                        ->label('Start')
+                                        ->numeric(),
+                                    TextInput::make('cs')
+                                        ->label('Caution Start')
+                                        ->required()
+                                        ->numeric(),
+                                    TextInput::make('gs')
+                                        ->required()
+                                        ->numeric()
+                                        ->label('Good Start'),
+                                    TextInput::make('ge')
+                                        ->required()
+                                        ->label('Good End')
+                                        ->numeric(), // less than or equal
+                                    TextInput::make('ce')
+                                        ->required()
+                                        ->label('Caution End')
+                                        ->numeric(), // greater than or equal
+                                    TextInput::make('end')
+                                        ->required()
+                                        ->numeric()
+                                        ->label('End'),
+                                ])
+                        ])->reorderable(false)->collapsible()->collapsed()
                 ]),
 
             ])
@@ -163,9 +165,9 @@ class SettingsParameter extends Component implements HasForms
         $formattedSensor = AppSettings::getTranslation()->value;
         $allowedSensors = WaterpoolController::getAllowedSensors();
         foreach ($formattedSensor as $key => $value) {
-             if (!in_array($key, $allowedSensors)) {
-                    continue;
-                }
+            if (!in_array($key, $allowedSensors)) {
+                continue;
+            }
             $sensors[$key] = __($value);
         }
         return $sensors;
@@ -187,7 +189,6 @@ class SettingsParameter extends Component implements HasForms
         foreach ($state as $key => $value) {
             $stateArrayed[$key] = self::arrayToKv($value);
         }
-
         foreach ($stateArrayed as $key => $value) {
             AppSettings::updateOrCreate([
                 'key' => $key,
