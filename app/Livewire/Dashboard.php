@@ -198,7 +198,7 @@ class Dashboard extends BaseWidget
                     if (!is_numeric($formattedBattery)) {
                         $textBattery = $formattedBattery;
                     } else {
-                        $textBattery = '0' . '%';
+                        $textBattery = $formattedBattery . '%';
                     }
 
                     if ($formattedBattery > 70 && $formattedBattery <= 100) {
