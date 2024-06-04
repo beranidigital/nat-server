@@ -149,7 +149,11 @@ class StatusController extends Controller
 
     public static function formatPH($value)
     {
-        $numericValue = floatval($value) / 10;
+        if($value == 'unknown' || $value == 'unavailable'){
+            $numericValue = $value;
+        } else {
+            $numericValue = floatval($value) / 10;
+        }
         return [
             'value' => strval($numericValue),
             'unit' => 'pH',
