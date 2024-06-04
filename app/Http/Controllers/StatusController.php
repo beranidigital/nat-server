@@ -150,15 +150,20 @@ class StatusController extends Controller
     public static function formatPH($value)
     {
         if($value == 'unknown' || $value == 'unavailable'){
-            $numericValue = $value;
+            return [
+                'value' => $value,
+                'unit' => 'pH',
+                'label' => __('translation.ph'),
+            ];
         } else {
             $numericValue = floatval($value) / 10;
+            return [
+                'value' => strval($numericValue),
+                'unit' => 'pH',
+                'label' => __('translation.ph'),
+            ];
         }
-        return [
-            'value' => strval($numericValue),
-            'unit' => 'pH',
-            'label' => __('translation.ph'),
-        ];
+
     }
 
     // allow for multiple devices
