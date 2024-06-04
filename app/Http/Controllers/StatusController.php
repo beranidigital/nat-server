@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppSettings;
-use App\Models\Carbon;
 
 class StatusController extends Controller
 {
@@ -141,7 +140,6 @@ class StatusController extends Controller
     {
 
         $formattedValue = $value;
-
         return [
             'value' => $formattedValue,
             'unit' => '°C',
@@ -151,8 +149,9 @@ class StatusController extends Controller
 
     public static function formatPH($value)
     {
+        $numericValue = floatval($value) / 10;
         return [
-            'value' => $value,
+            'value' => strval($numericValue),
             'unit' => 'pH',
             'label' => __('translation.ph'),
         ];

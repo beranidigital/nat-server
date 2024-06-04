@@ -85,7 +85,7 @@ class WaterpoolController extends Controller
                 return StatusController::formatBattery($value);
             default:
                 //throw new \Exception("Unknown sensor: {$sensor_name}");
-                Log::warning("Unknown sensor: {$sensor_name}");
+//                Log::warning("Unknown sensor: {$sensor_name}");
                 // if(config('app.debug')) throw new \Exception("Unknown sensor: {$sensor_name}");
 
                 return [
@@ -110,7 +110,7 @@ class WaterpoolController extends Controller
 
     public static function getAllowedSensors(): array
     {
-        return self::$allowedSensors;;
+        return self::$allowedSensors;
     }
 
     public static function unknownSensors(): array
