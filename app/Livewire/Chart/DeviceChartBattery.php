@@ -111,7 +111,7 @@ class DeviceChartBattery extends ChartWidget
             if (in_array($date, $battery['date'])) {
                 $indices = array_keys($battery['date'], $date);
                 foreach ($indices as $index) {
-                    if($battery['data'][$index] == 'unknown' || $battery['data'][$index] == 'unvailable'){
+                    if($battery['data'][$index] == 'unknown' || $battery['data'][$index] == 'unavailable'){
                         $filteredData[] = 0;
                         $filteredDates[] = $date;
                     } else {
@@ -176,7 +176,6 @@ class DeviceChartBattery extends ChartWidget
                 }
             }
         }
-
 
         return $battery;
 

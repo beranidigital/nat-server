@@ -18,16 +18,17 @@ class AppSettings extends Model
         'nat_02_1',
         'nat02_2_2',
     ];
+    private static $messages;
 
     protected $fillable = [
         'key',
         'value',
     ];
 
-    public static $greenScoreMax = 1.0;
+    public static $greenScoreMax = 0.9;
     public static $greenScoreMin = 0.7;
     public static $yellowScoreMax = 0.7;
-    public static $yellowScoreMin = 0.4;
+    public static $yellowScoreMin = 0.39;
     public static $ignoreSensors = [
         'timestamp',
         'latestTimestamp',
@@ -81,7 +82,7 @@ class AppSettings extends Model
                 'key' => 'devices_name'
             ];
         }
- 
+
         $devicesName = self::get('devices_name');
         $default = [];
         $devices = StateLog::getDevices();
@@ -96,7 +97,7 @@ class AppSettings extends Model
                 'value' => $default,
             ]);
         }
-    
+
         $devicesNameValue = self::syncWithDefault($default, $devicesName->value);
 
         $devicesName->value = $devicesNameValue;
@@ -149,6 +150,32 @@ class AppSettings extends Model
         return $translation;
     }
 
+    public static function getMessage()
+    {
+        $message = self::get('message');
+        $default = self::$message;
+
+        if (!$message) {
+            $message = self::create([
+                'key' => 'message',
+                'value' => $default,
+            ]);
+        }
+
+        $messageValue = self::syncWithDefault($default, $message->value);
+        $message->value = $messageValue;
+        return $message;
+    }
+
+    public static $message = [
+        'good' => 'Good: Water with optimal pH and proper ORP values is considered safe and conducive to health.',
+        'caution' => 'Caution: Water with suboptimal pH and ORP values may pose risks to health and water quality.',
+        'badOrp' => 'Bad: Water with suboptimal ORP value may pose risks to health and water quality.',
+        'badPh' => 'Bad: Water with suboptimal pH value may pose risks to health and water quality.',
+        'bad' => 'Bad: Water with suboptimal pH and ORP values may pose risks to health and water quality.',
+        'disabled' => 'Non Available'
+    ];
+
     /**
      * Synchronizes the provided value array with the default array.
      *
@@ -200,7 +227,6 @@ class AppSettings extends Model
             $parameterProfile->value = $default;
         }
         $value = $parameterProfile->value;
-        $value['Internasional'] = $default['Internasional']; // don't change this lol
 
         // convert integer score to float based on green and yellow
         foreach ($value as $profile => $parameters) {
@@ -280,7 +306,7 @@ class AppSettings extends Model
             $poolProfileParameter->value = $default;
         }
 
-        $value = self::syncWithDefault($default, $poolProfileParameter->value);
+        $value = $poolProfileParameter->value;
         return $value;
     }
 

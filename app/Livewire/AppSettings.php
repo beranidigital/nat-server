@@ -29,56 +29,6 @@ class AppSettings extends Component implements HasForms
      * @param array $array The array to check for string keys.
      * @return bool True if the array has string keys, false otherwise.
      */
-    public static function has_string_keys(array $array): bool
-    {
-        return count(array_filter(array_keys($array), 'is_string')) > 0;
-    }
-
-    public static function kvToArray($kv)
-    {
-        if (!self::has_string_keys($kv)) {
-            return $kv;
-        }
-        $array = [];
-        foreach ($kv as $key => $value) {
-            // check if value is Key Value
-            if (is_array($value)) {
-                $array[] = [
-                    'name' => $key,
-                    'value' => self::kvToArray($value),
-                ];
-                continue;
-            }
-            $array[] = [
-                'name' => $key,
-                'value' => $value,
-            ];
-        }
-
-        return $array;
-    }
-
-    public static function arrayToKv($input)
-    {
-        $output = [];
-
-        if (isset($input['name']) && isset($input['value'])) {
-            $output[$input['name']] = $input['value'];
-        } else {
-            foreach ($input as $item) {
-                if (!isset($item['name']) || !isset($item['value'])) {
-                    $output[] = $item;
-                } else if (is_array($item['value'])) {
-                    $output[$item['name']] = self::arrayToKv($item['value']);
-                } else {
-                    $output[$item['name']] = $item['value'];
-                }
-            }
-        }
-
-        return $output;
-    }
-
     public function mount(): void
     {
         $this->loadData();
@@ -88,6 +38,9 @@ class AppSettings extends Component implements HasForms
     {
         $devices = ModelAppSettings::getDevicesName()->value;
         $translation = ModelAppSettings::getTranslation()->value;
+        $message = ModelAppSettings::getMessage()->value;
+
+        asort($devices);
         if (is_array($devices)) {
             foreach ($devices as $deviceKey => $deviceValue) {
                     $this->data['devices'][$deviceKey] = $deviceValue;
@@ -99,7 +52,11 @@ class AppSettings extends Component implements HasForms
                 $this->data['translation'][$translationKey] = $translationValue;
             }
         }
-
+        if (is_array($message)) {
+            foreach ($message as $messageKey => $messageValue) {
+                $this->data['message'][$messageKey] = $messageValue;
+            }
+        }
         $this->form->fill($this->data);
     }
 
@@ -110,7 +67,7 @@ class AppSettings extends Component implements HasForms
                 Grid::make()->schema([
                     Section::make(
                         [...$this->commonSchema(),]
-                    )->columns(2)
+                    ),
                 ]),
             ])
             ->statePath('data');
@@ -120,8 +77,18 @@ class AppSettings extends Component implements HasForms
     {
         $formattedDevices = $this->data['devices'];
         $formattedTranslation = $this->data['translation'];
+        $formattedMessage = $this->data['message'];
+        $messageKeyLabel = [
+            'good' => ' Good Condition Message',
+            'caution' => 'Caution Condition Message',
+            'bad' => 'Bad ORP & pH Condition Message',
+            'badOrp' => 'Bad ORP Condition Message',
+            'badPh' => 'Bad pH Condition Message',
+            'disabled' => 'Caution Condition Message'
+
+        ];
         $sections = [];
-        
+
         $deviceInputs = [];
         foreach ($formattedDevices as $deviceKey => $deviceValue) {
             $deviceInputs[] = TextInput::make('devices.' . $deviceKey)
@@ -129,8 +96,7 @@ class AppSettings extends Component implements HasForms
                 ->required();
         }
         $sections[] = Section::make('Device Name')
-        ->schema($deviceInputs)
-        ->columns(2);
+        ->schema($deviceInputs);
 
         $translationInputs = [];
         foreach ($formattedTranslation as $translationKey => $translationValue) {
@@ -139,8 +105,17 @@ class AppSettings extends Component implements HasForms
                 ->required();
         }
         $sections[] = Section::make('Sensor Name')
-        ->schema($translationInputs)
-        ->columns(2);
+        ->schema($translationInputs);
+
+        $messageInputs = [];
+        foreach ($formattedMessage as $messageKey => $messageValue) {
+            $messageLabel = $messageKeyLabel[$messageKey] ?? $messageKey;
+            $messageInputs[] = TextInput::make('message.' . $messageKey)
+                ->label($messageLabel)
+                ->required();
+        }
+        $sections[] = Section::make('Status Message')
+            ->schema($messageInputs);
 
         return $sections;
     }
@@ -152,6 +127,7 @@ class AppSettings extends Component implements HasForms
         $dataToUpdate = [
             'devices_name' => $state['devices'],
             'translation' => $state['translation'],
+            'message' => $state['message'],
         ];
         foreach ($dataToUpdate as $key => $value) {
             ModelAppSettings::updateOrCreate(

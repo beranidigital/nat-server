@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppSettings;
-use App\Models\Carbon;
 
 class StatusController extends Controller
 {
@@ -22,59 +21,58 @@ class StatusController extends Controller
     public static $parametersThresholdInternational = [
         [
             'sensor' => 'temp',
-            'start' => 0,
-            'cs' => 18,
-            'gs' => 22,
-            'ge' => 26,
-            'ce' => 28,
-            'end' => 50
+            'start' => '0',
+            'cs' => '18',
+            'gs' => '22',
+            'ge' => '26',
+            'ce' => '28',
+            'end' => '50'
         ],
         [
             'sensor' => 'ph',
-            'start' => 0,
-            'cs' => 6.5,
-            'gs' => 7.2,
-            'ge' => 8.0,
-            'ce' => 10.0,
-            'end' => 10.0
+            'start' => '0',
+            'cs' => '6.5',
+            'gs' => '7.2',
+            'ge' => '8.0',
+            'ce' => '10.0',
+            'end' => '10.0'
         ],
         [
             'sensor' => 'orp',
-            'start' => 100,
-            'cs' => 650,
-            'gs' => 700,
-            'ge' => 750,
-            'ce' => 800,
-            'end' => 800
+            'start' => '100',
+            'cs' => '650',
+            'gs' => '700',
+            'ge' => '750',
+            'ce' => '800',
+            'end' => '800'
         ],
         [
             'sensor' => 'ec',
-            'start' => 1.0,
-            'cs' => 2.0,
-            'gs' => 2.5,
-            'ge' => 3.0,
-            'ce' => 4.0,
-            'end' => 5.0
+            'start' => '1.0',
+            'cs' => '2.0',
+            'gs' => '2.5',
+            'ge' => '3.0',
+            'ce' => '4.0',
+            'end' => '5.0'
         ],
         [
             'sensor' => 'tds',
-            'start' => 0,
-            'cs' => 200,
-            'gs' => 700,
-            'ge' => 1500,
-            'ce' => 2000,
-            'end' => 2000
+            'start' => '0',
+            'cs' => '200',
+            'gs' => '700',
+            'ge' => '1500',
+            'ce' => '2000',
+            'end' => '2000'
         ],
         [
             'sensor' => 'cl',
-            'start' => 0,
-            'cs' => 0.1,
-            'gs' => 1.0,
-            'ge' => 3.0,
-            'ce' => 5.0,
-            'end' => 5.0
+            'start' => '0',
+            'cs' => '0.1',
+            'gs' => '1.0',
+            'ge' => '3.0',
+            'ce' => '5.0',
+            'end' => '5.0'
         ],
-
     ];
 
 
@@ -142,7 +140,6 @@ class StatusController extends Controller
     {
 
         $formattedValue = $value;
-
         return [
             'value' => $formattedValue,
             'unit' => '°C',
@@ -152,11 +149,21 @@ class StatusController extends Controller
 
     public static function formatPH($value)
     {
-        return [
-            'value' => $value,
-            'unit' => 'pH',
-            'label' => __('translation.ph'),
-        ];
+        if($value == 'unknown' || $value == 'unavailable'){
+            return [
+                'value' => $value,
+                'unit' => 'pH',
+                'label' => __('translation.ph'),
+            ];
+        } else {
+            $numericValue = floatval($value) / 10;
+            return [
+                'value' => strval($numericValue),
+                'unit' => 'pH',
+                'label' => __('translation.ph'),
+            ];
+        }
+
     }
 
     // allow for multiple devices

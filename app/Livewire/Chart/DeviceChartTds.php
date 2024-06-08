@@ -90,7 +90,7 @@ class DeviceChartTds extends ChartWidget
             if (in_array($date, $tds['date'])) {
                 $indices = array_keys($tds['date'], $date);
                 foreach ($indices as $index) {
-                    if($tds['data'][$index] == 'unknown' || $tds['data'][$index] == 'unvailable'){
+                    if($tds['data'][$index] == 'unknown' || $tds['data'][$index] == 'unavailable'){
                         $filteredData[] = 0;
                         $filteredDates[] = $date;
                     } else {

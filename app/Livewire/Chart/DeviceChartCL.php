@@ -83,7 +83,7 @@ class DeviceChartCL extends ChartWidget
                 if (in_array($date, $cl['date'])) {
                     $indices = array_keys($cl['date'], $date);
                     foreach ($indices as $index) {
-                        if($cl['data'][$index] == 'unknown' || $cl['data'][$index] == 'unvailable'){
+                        if($cl['data'][$index] == 'unknown' || $cl['data'][$index] == 'unavailable'){
                             $filteredData[] = 0;
                             $filteredDates[] = $date;
                         } else {

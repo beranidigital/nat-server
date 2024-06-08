@@ -407,9 +407,9 @@ class SensorDataController extends Controller
             $gs = $parameterThreshold['gs'];
             $ge = $parameterThreshold['ge'];
             // Lakukan pengecekan logika
-            if ($value > $gs && $value < $ge) {
+            if ($value >= $gs && $value <= $ge) {
                 $score = 0.7;
-            } elseif ($value > $cs && $value < $ce){
+            } elseif ($value >= $cs && $value <= $ce){
                 $score = 0.4;
             } else{
                 $score = 1.0;
