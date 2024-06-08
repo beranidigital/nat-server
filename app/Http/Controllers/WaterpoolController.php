@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppSettings;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class WaterpoolController extends Controller
 {
@@ -85,7 +83,7 @@ class WaterpoolController extends Controller
                 return StatusController::formatBattery($value);
             default:
                 //throw new \Exception("Unknown sensor: {$sensor_name}");
-                Log::warning("Unknown sensor: {$sensor_name}");
+                //Log::warning("Unknown sensor: {$sensor_name}");
                 // if(config('app.debug')) throw new \Exception("Unknown sensor: {$sensor_name}");
 
                 return [
