@@ -103,7 +103,7 @@ class StateLog extends Model
         $formattedSensors = [];
         foreach ($this->sensors as $sensor => $value) {
             $formattedSensors[$sensor] = WaterpoolController::formatSensor($sensor, $value);
-            $formattedSensors[$sensor]['label'] = $this->value('attributes')['friendly_name'] ?? $formattedSensors[$sensor]['label'];
+            $formattedSensors[$sensor]['label'] = $this->friendly_name ?? $formattedSensors[$sensor]['label'];
             if (!is_array($formattedSensors[$sensor])) throw new \Exception('formatSensor must return array for sensor: ' . $sensor . ' value: ' . $value);
         }
 
