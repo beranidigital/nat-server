@@ -7,9 +7,7 @@ use App\Livewire\ChartPoolDetail;
 use App\Models\Pool\StateLog;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
-use Flowframe\Trend\TrendValue;
 use Illuminate\Support\Carbon;
-use Livewire\Component;
 
 class DeviceChartConductivity extends ChartWidget
 {
@@ -82,7 +80,7 @@ class DeviceChartConductivity extends ChartWidget
             }
         }
 
-        $validDates = array_intersect($dates, $ec['date']);
+
         $filteredData = [];
         $filteredDates = [];
 

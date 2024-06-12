@@ -75,7 +75,7 @@ class DeviceChartCL extends ChartWidget
             }
         }
 
-        $validDates = array_intersect($dates, $cl['date']);
+
         $filteredData = [];
         $filteredDates = [];
 

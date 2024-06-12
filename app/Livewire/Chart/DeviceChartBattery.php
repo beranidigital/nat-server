@@ -103,7 +103,6 @@ class DeviceChartBattery extends ChartWidget
             }
         }
 
-        $validDates = array_intersect($dates, $battery['date']);
         $filteredData = [];
         $filteredDates = [];
 

@@ -5,11 +5,8 @@ namespace App\Livewire\Chart;
 use App\Enums\IntervalFrequency;
 use App\Livewire\ChartPoolDetail;
 use App\Models\Pool\StateLog;
-use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
-use Flowframe\Trend\TrendValue;
-use Livewire\Component;
 
 class DeviceChartTemp extends ChartWidget
 {
@@ -83,7 +80,7 @@ class DeviceChartTemp extends ChartWidget
             }
         }
 
-        $validDates = array_intersect($dates, $temp['date']);
+
         $filteredData = [];
         $filteredDates = [];
 
